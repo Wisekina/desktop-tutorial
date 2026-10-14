@@ -1,4 +1,4 @@
-import { t, locale, translateError } from './i18n.js?v=fuji-nengajo-3';
+import { t, locale, translateError } from './i18n.js?v=toyota-4';
 import { ornamentLayout } from './ornaments.js';
 import { staticPreview } from './runtime.js';
 const $ = id => document.getElementById(id);

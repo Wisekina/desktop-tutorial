@@ -1,4 +1,4 @@
-import { t, translateError } from './i18n.js';
+import { t, translateError } from './i18n.js?v=toyota-4';
 import { staticPreview } from './runtime.js';
 const form = document.getElementById('settings');
 if (!staticPreview) fetch('/api/status').then(r => r.json()).then(data => {
