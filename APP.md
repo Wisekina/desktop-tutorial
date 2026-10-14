@@ -21,3 +21,7 @@ Kişisel bağlantıyı bilen herkes o sonucu açabilir. Organizatör ekranı son
 ## QR ile katılım
 
 `/yonetim` ekranındaki QR bölümüne uygulamanın gerçek HTTPS yayın adresini girin. Ortak QR kodu oluşturulabilir ve PNG olarak indirilebilir; ofis panosuna asılabilir veya ekip içinde paylaşılabilir. Telefonda tarandığında dil seçimi ve kayıt ekranı açılır. Kod sunucuda üretilir; üçüncü taraf QR hizmeti kullanılmaz. QR'ı paylaşmadan önce adresi telefonunuzdan açıp ulaşılabildiğini kontrol edin. Henüz bir yayın adresi oluşturulmadı. Yerel adresler ve kişisel kartpostal bağlantıları ortak QR olarak kabul edilmez. Ortak QR çekiliş sonrasında da siteyi açar; katılımcı kendi kartpostalına erişmek için kayıt yaptığı tarayıcıyı veya yedek erişim bağlantısını kullanmalıdır.
+
+## Tasarım önizlemesi
+
+Katılımcıya gönderilen normal bağlantıda kartpostal önizlemesi yoktur. Tasarımı incelemek için ana ekran adresine `?preview=1#kartpostal` ekleyin. Bu yalnızca örnek tasarımı açar; bir yetkilendirme yöntemi değildir ve hiçbir kişisel eşleşmeyi göstermez. Kayıt kapanışında geri gelme hatırlatması ekranda gösterilir; e-posta veya telefon bildirimi gönderilmez.

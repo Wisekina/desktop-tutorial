@@ -1,7 +1,8 @@
-import { t, locale, translateError } from './i18n.js?v=toyota-4';
+import { t, locale, translateError } from './i18n.js?v=party-5';
 import { ornamentLayout } from './ornaments.js';
 import { staticPreview } from './runtime.js';
 const $ = id => document.getElementById(id);
+const previewEnabled = new URL(location.href).searchParams.get('preview') === '1';
 let storedToken;
 try { storedToken = localStorage.getItem('neseli-token'); } catch {}
 let status, token = location.hash.startsWith('#k=') ? location.hash.slice(3) : storedToken;
@@ -56,6 +57,7 @@ async function refresh() {
   $('budget').textContent = status.budget ? new Intl.NumberFormat(locale()).format(status.budget) + ' TL' : t('unsetBudget');
   $('deadline').textContent = status.deadline ? formatDate(status.deadline) : t('unsetDeadline');
   $('people-count').textContent = status.count;
+  $('return-reminder').textContent = status.deadline ? t('returnReminderDate', { date:formatDate(status.deadline) }) : t('returnReminder');
   drawOrnaments(status.count); countdown();
   if (!status.deadline && !token) $('message').textContent = t('notConfigured');
   if (status.deadline && !token) $('message').textContent = Date.parse(status.deadline) <= status.serverTime ? t('closed') : '';
@@ -67,7 +69,7 @@ async function loadPersonal() {
   $('welcome').textContent = t('welcome', { name:ownResult.name });
   const personalUrl = new URL('./', location.href); personalUrl.hash = 'k=' + token;
   $('personal-link').value = personalUrl.href;
-  $('result-message').textContent = t(status.drawn ? 'arrived' : status.deadline && status.serverTime >= Date.parse(status.deadline) ? 'tooFew' : 'waiting');
+  $('result-message').textContent = status.drawn ? t('arrived') : status.deadline && status.serverTime >= Date.parse(status.deadline) ? t('tooFew') : status.deadline ? t('waitingDate', { date:formatDate(status.deadline) }) : t('waiting');
   $('reveal').hidden = !ownResult.recipient || !$('gift').hidden;
 }
 $('register-form').addEventListener('submit', async event => {
@@ -92,6 +94,7 @@ window.addEventListener('app-language', () => refresh().catch(error => { $('mess
 
 const cardPreview = $('postcard-preview-dialog');
 function openCardPreview() {
+  if (!previewEnabled) return;
   const card = $('reveal').cloneNode(true); card.removeAttribute('id'); card.hidden = false;
   card.setAttribute('aria-label', t('cardPreview'));
   card.addEventListener('click', () => { $('sample-card-note').textContent = t('cardPreviewNote'); });
@@ -99,10 +102,11 @@ function openCardPreview() {
   $('close-card-preview').setAttribute('aria-label', t('close'));
   cardPreview.showModal();
 }
+$('open-card-preview').hidden = !previewEnabled;
 $('open-card-preview').addEventListener('click', openCardPreview);
 $('close-card-preview').addEventListener('click', () => cardPreview.close());
 
-if (location.hash === '#kartpostal') {
+if (previewEnabled && location.hash === '#kartpostal') {
   const languageDialog = $('language-dialog');
   if (languageDialog.open) window.addEventListener('app-language', openCardPreview, { once: true });
   else openCardPreview();

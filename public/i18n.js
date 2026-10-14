@@ -32,6 +32,8 @@ Object.assign(tr, {postcardTitle:'Yeni yıldan sana bir sır.', postcardHint:'Ka
 Object.assign(ja, {postcardTitle:'新年の、あなただけの秘密。', postcardHint:'年賀状を開く →', stamp:'年賀'});
 Object.assign(tr, {cardPreview:'Kartpostal önizlemesi', cardPreviewNote:'Tasarım örneği · Gerçek eşleşmen çekiliş günü açılacak.', close:'Kapat'});
 Object.assign(ja, {cardPreview:'年賀状のプレビュー', cardPreviewNote:'デザイン例 · 抽選の日に本当の結果が届きます。', close:'閉じる'});
+Object.assign(tr, {hero:'Şşşt…<br><em>bir sürpriz var!</em>', returnReminder:'🎁 Kayıtların kapandığı gün yine gel; kartpostalındaki gizli hediye görevini keşfet!', returnReminderDate:'🎁 {date} tarihinde kayıtlar kapanıyor. O gün tekrar gir, kartpostalını aç ve gizli hediye görevini keşfet!', waitingDate:'🎁 {date} tarihinde tekrar gel; kartpostalını açıp kime hediye alacağını öğren! Aynı tarayıcıdan gir veya özel bağlantını sakla.', waiting:'🎁 Kayıtların kapandığı gün tekrar gel ve kartpostalını aç! Aynı tarayıcıdan gir veya özel bağlantını sakla.'});
+Object.assign(ja, {hero:'しーっ…<br><em>サプライズがあるよ！</em>', returnReminder:'🎁 登録締め切りの日にまた来てね。年賀状を開いて、秘密のプレゼントミッションを見つけよう！', returnReminderDate:'🎁 {date}（トルコ時間）に登録終了。その日にもう一度アクセスして、年賀状を開こう！', waitingDate:'🎁 {date}（トルコ時間）に戻って、年賀状を開いて贈る相手を確認してね。同じブラウザか専用リンクでアクセスしよう。', waiting:'🎁 登録締め切りの日に戻って年賀状を開こう！同じブラウザか専用リンクでアクセスしてね。'});
 let current = 'tr';
 try { if (localStorage.getItem('neseli-language') === 'ja') current = 'ja'; } catch {}
 export const locale = () => current === 'ja' ? 'ja-JP' : 'tr-TR';
