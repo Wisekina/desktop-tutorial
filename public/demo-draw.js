@@ -1,6 +1,11 @@
-import { t } from './i18n.js?v=participants-11';
+import { t } from './i18n.js?v=postcard-12';
 import { ornamentLayout } from './ornaments.js';
+import { postcardEntrance } from './postcard-motion.js?v=postcard-12';
 const $ = id => document.getElementById(id);
+const dialog = $('demo-postcard-dialog');
+const entrance = postcardEntrance(dialog, $('demo-tree'));
+$('close-demo-postcard').addEventListener('click', () => { entrance.cancel(); $('demo-start').hidden=false; });
+dialog.addEventListener('cancel', () => { $('demo-start').hidden=false; });
 let template, match;
 function randomBelow(n) {
   const cutoff = Math.floor(4294967296/n)*n;
@@ -39,7 +44,8 @@ function renderCard() {
   card.addEventListener('click',()=>{$('demo-card').replaceChildren();$('demo-result').hidden=false;$('demo-recipient').textContent=t('demoPerson',{n:match});$('demo-message').textContent=t('demoVerified');});
   $('demo-card').replaceChildren(card);
 }
-$('demo-start').addEventListener('click',()=>{match=exampleDraw();$('demo-start').hidden=true;$('demo-result').hidden=true;$('demo-message').textContent=t('demoCard');renderCard();});
-$('demo-again').addEventListener('click',()=>{$('demo-result').hidden=true;$('demo-start').hidden=false;$('demo-message').textContent='';});
+$('demo-start').addEventListener('click',()=>{match=exampleDraw();$('demo-start').hidden=true;$('demo-result').hidden=true;$('demo-recipient').textContent='';$('demo-message').textContent='';renderCard();entrance.play();});
+dialog.addEventListener('close',()=>{if(!$('demo-result').hidden)$('demo-message').textContent=t('demoVerified');});
+$('demo-again').addEventListener('click',()=>{entrance.cancel();$('demo-result').hidden=true;$('demo-start').hidden=false;$('demo-message').textContent='';});
 window.addEventListener('app-language',()=>{if(match&&$('demo-card').children.length){renderCard();$('demo-message').textContent=t('demoCard');}if(!$('demo-result').hidden){$('demo-recipient').textContent=t('demoPerson',{n:match});$('demo-message').textContent=t('demoVerified');}});
 init().catch(error=>{$('demo-message').textContent=error.message;});

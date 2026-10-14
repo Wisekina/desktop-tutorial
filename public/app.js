@@ -1,9 +1,15 @@
-import { t, locale, translateError } from './i18n.js?v=participants-11';
+import { t, locale, translateError } from './i18n.js?v=postcard-12';
 import { ornamentLayout } from './ornaments.js';
-import { staticPreview } from './runtime.js?v=participants-11';
-import { requestApi } from './connection.js?v=participants-11';
+import { postcardEntrance } from './postcard-motion.js?v=postcard-12';
+import { staticPreview } from './runtime.js?v=postcard-12';
+import { requestApi } from './connection.js?v=postcard-12';
 const $ = id => document.getElementById(id);
 const previewEnabled = new URL(location.href).searchParams.get('preview') === '1';
+const resultDialog = $('draw-postcard-dialog');
+const entrance = postcardEntrance(resultDialog, document.querySelector('.scene'));
+let postcardPresented = false;
+$('close-draw-postcard').addEventListener('click', () => resultDialog.close());
+$('open-draw-postcard').addEventListener('click', () => { entrance.cancel(); resultDialog.showModal(); });
 let storedToken;
 try { storedToken = localStorage.getItem('neseli-token'); } catch {}
 let status, token = location.hash.startsWith('#k=') ? location.hash.slice(3) : storedToken;
@@ -69,6 +75,8 @@ async function loadPersonal() {
       if (error.message !== translateError('Kişisel bağlantı geçersiz.')) throw error;
       try { if (localStorage.getItem('neseli-token') === token) localStorage.removeItem('neseli-token'); } catch {}
       token = undefined; ownResult = null; ownResultCount = undefined;
+      entrance.cancel(); postcardPresented = false; $('open-draw-postcard').hidden = true;
+      $('recipient').textContent = '';
       history.replaceState(null,'',location.pathname+location.search);
       $('success').hidden = true; $('registration').hidden = false; $('gift').hidden = true; $('reveal').hidden = true;
       $('message').textContent = t('registrationRemoved');
@@ -82,6 +90,11 @@ async function loadPersonal() {
   $('personal-link').value = personalUrl.href;
   $('result-message').textContent = status.drawn ? t('arrived') : status.deadline && status.serverTime >= Date.parse(status.deadline) ? t('tooFew') : status.deadline ? t('waitingDate', { date:formatDate(status.deadline) }) : t('waiting');
   $('reveal').hidden = !ownResult.recipient || !$('gift').hidden;
+  $('open-draw-postcard').hidden = !ownResult.recipient;
+  if (ownResult.recipient && !postcardPresented) {
+    postcardPresented = true;
+    entrance.play();
+  }
 }
 $('register-form').addEventListener('submit', async event => {
   event.preventDefault(); $('join').disabled = true; $('message').textContent = '';

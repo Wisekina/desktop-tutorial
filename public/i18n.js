@@ -42,6 +42,8 @@ Object.assign(ja, {participantsTitle:'参加者', refreshParticipants:'更新', 
 Object.assign(errors, {'Kayıtlar kapandıktan sonra silme yapılamaz.':'登録終了後は削除できません。','Kayıt bulunamadı.':'登録が見つかりません。'});
 Object.assign(tr, {exportExcel:'Excel indir ↓', participantName:'İsim', participantTime:'Kayıt tarihi', participantAction:'İşlem', testDraw:'Deneme çekilişi →', demoTitle:'Sürprizini<br><em>deneyelim.</em>', demoNotice:'Bu bir deneme. Gerçek kayıtlar ve eşleşmeler değişmez.', demoParticipants:'25 deneme katılımcısı', demoStart:'Deneme çekilişini yap →', demoCard:'Kartpostalın hazır. Tıklayıp aç!', demoRecipient:'ÖRNEK KATILIMCININ HEDİYE ALACAĞI KİŞİ', demoAgain:'Yeniden dene', demoPerson:'Deneme katılımcısı {n}', demoVerified:'25 farklı eşleşme. Kimse kendisini çekmedi.', demoNoData:'Bu ekranda gerçek katılımcı bilgileri kullanılmaz.', excelDate:'Kayıt tarihi (Türkiye saati)', excelName:'İsim', excelSheet:'Katılımcılar'});
 Object.assign(ja, {exportExcel:'Excelをダウンロード ↓', participantName:'氏名', participantTime:'登録日時', participantAction:'操作', testDraw:'抽選を試す →', demoTitle:'サプライズを<br><em>試してみよう。</em>', demoNotice:'これはデモです。実際の登録や抽選結果は変更されません。', demoParticipants:'25人のデモ参加者', demoStart:'デモ抽選を実行 →', demoCard:'年賀状が届きました。クリックして開こう！', demoRecipient:'デモ参加者がプレゼントを贈る相手', demoAgain:'もう一度試す', demoPerson:'デモ参加者 {n}', demoVerified:'25人全員に別の相手。自分自身との組み合わせはありません。', demoNoData:'この画面では実際の参加者情報を使用しません。', excelDate:'登録日時（トルコ時間）', excelName:'氏名', excelSheet:'参加者'});
+Object.assign(tr, {openPostcard:'Kartpostalını aç →'});
+Object.assign(ja, {openPostcard:'年賀状を開く →'});
 let current = 'tr';
 try { if (localStorage.getItem('neseli-language') === 'ja') current = 'ja'; } catch {}
 export const locale = () => current === 'ja' ? 'ja-JP' : 'tr-TR';
