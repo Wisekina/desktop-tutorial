@@ -1,4 +1,4 @@
-import { t, locale, translateError } from './i18n.js?v=party-5';
+import { t, locale, translateError } from './i18n.js?v=headline-6';
 import { ornamentLayout } from './ornaments.js';
 import { staticPreview } from './runtime.js';
 const $ = id => document.getElementById(id);
