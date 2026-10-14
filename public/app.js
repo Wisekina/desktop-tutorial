@@ -1,4 +1,4 @@
-import { t, locale, translateError } from './i18n.js';
+import { t, locale, translateError } from './i18n.js?v=card-preview-2';
 import { staticPreview } from './runtime.js';
 const $ = id => document.getElementById(id);
 let storedToken;
@@ -94,12 +94,19 @@ setInterval(countdown, 1000);
 window.addEventListener('app-language', () => refresh().catch(error => { $('message').textContent = error.message; }));
 
 const cardPreview = $('postcard-preview-dialog');
-$('open-card-preview').addEventListener('click', () => {
+function openCardPreview() {
   const card = $('reveal').cloneNode(true); card.removeAttribute('id'); card.hidden = false;
   card.setAttribute('aria-label', t('cardPreview'));
   card.addEventListener('click', () => { $('sample-card-note').textContent = t('cardPreviewNote'); });
   $('postcard-preview-content').replaceChildren(card);
   $('close-card-preview').setAttribute('aria-label', t('close'));
   cardPreview.showModal();
-});
+}
+$('open-card-preview').addEventListener('click', openCardPreview);
 $('close-card-preview').addEventListener('click', () => cardPreview.close());
+
+if (location.hash === '#kartpostal') {
+  const languageDialog = $('language-dialog');
+  if (languageDialog.open) window.addEventListener('app-language', openCardPreview, { once: true });
+  else openCardPreview();
+}
