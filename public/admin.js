@@ -1,6 +1,7 @@
 import { t, translateError } from './i18n.js';
+import { staticPreview } from './runtime.js';
 const form = document.getElementById('settings');
-fetch('/api/status').then(r => r.json()).then(data => {
+if (!staticPreview) fetch('/api/status').then(r => r.json()).then(data => {
   if (data.deadline) {
     const parts = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Istanbul', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(data.deadline));
     document.getElementById('deadline').value = parts.replace(' ', 'T');
@@ -42,3 +43,11 @@ qrForm.addEventListener('submit', async event => {
   finally { button.disabled = false; }
 });
 window.addEventListener('app-language', () => { qrImage.alt = t('qrAlt'); qrMessage.textContent = qrReady ? t('qrReady') : qrUrl.value ? '' : t('qrNeedsUrl'); });
+if (staticPreview) {
+  for (const control of document.querySelectorAll('form input,form button')) control.disabled = true;
+  const explainPreview = () => {
+    document.getElementById('message').textContent = t('previewMessage');
+    qrMessage.textContent = t('previewMessage');
+  };
+  explainPreview(); window.addEventListener('app-language', explainPreview);
+}

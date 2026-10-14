@@ -2,7 +2,11 @@
 
 Türkçe ve Japonca arayüzlü ofis yılbaşı çekilişi. Katılımcılar kaydoldukça ağaca bir süs eklenir. Kayıt süresi bittiğinde kimsenin kendisini çekmediği rastgele bir eşleştirme yapılır. Her katılımcı kendi yılbaşı kartpostalına tıklayıp hediye alacağı kişinin adını görür.
 
-## Bilgisayarına indirmeden dene
+## GitHub Pages'de arayüz
+
+[Yılbaşı ekranını aç](https://wisekina.github.io/desktop-tutorial/public/). GitHub Pages ayarı `main` dalı ve kök dizin (`/`) olduğunda ana adres de otomatik olarak bu ekrana yönlenir. Pages yalnızca arayüz önizlemesidir; sunucu çalıştıramadığı için ortak kayıt ve gerçek çekiliş bu yayında kapalıdır. Önizleme veri kaydetmez ve kayıt başarılı gibi davranmaz. Gerçek etkinlik için ayrı backend/veritabanı bağlantısı tamamlanmalıdır.
+
+## Bilgisayarına indirmeden tam uygulamayı dene
 
 1. GitHub'da **Code → Codespaces → Create codespace on main** seç. GitHub hesabında Codespaces erişimi ve kullanım kotası gerekir.
 2. Ortam açıldığında bağımlılıklar otomatik kurulur. Terminalde `npm start` çalıştır.

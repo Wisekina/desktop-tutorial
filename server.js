@@ -56,7 +56,7 @@ const server = http.createServer(async (req, res) => {
       }
       return json(404, { error: 'Bulunamadı.' });
     }
-    const files = { '/': ['index.html', 'text/html'], '/yonetim': ['admin.html', 'text/html'], '/style.css': ['style.css', 'text/css'], '/app.js': ['app.js', 'text/javascript'], '/admin.js': ['admin.js', 'text/javascript'], '/i18n.js': ['i18n.js', 'text/javascript'] };
+    const files = { '/': ['index.html', 'text/html'], '/yonetim': ['admin.html', 'text/html'], '/admin.html': ['admin.html', 'text/html'], '/style.css': ['style.css', 'text/css'], '/app.js': ['app.js', 'text/javascript'], '/admin.js': ['admin.js', 'text/javascript'], '/i18n.js': ['i18n.js', 'text/javascript'], '/runtime.js': ['runtime.js', 'text/javascript'] };
     if (req.method === 'GET' && files[url.pathname]) {
       const [file, type] = files[url.pathname];
       res.writeHead(200, { 'Content-Type': `${type}; charset=utf-8` });

@@ -1,4 +1,5 @@
 import { t, locale, translateError } from './i18n.js';
+import { staticPreview } from './runtime.js';
 const $ = id => document.getElementById(id);
 let storedToken;
 try { storedToken = localStorage.getItem('neseli-token'); } catch {}
@@ -43,6 +44,17 @@ function countdown() {
   $('join').disabled = !seconds;
 }
 async function refresh() {
+  if (staticPreview) {
+    $('preview-banner').hidden = false;
+    $('preview-banner').textContent = t('previewBanner');
+    $('message').textContent = t('previewMessage');
+    $('budget').textContent = t('unsetBudget');
+    $('deadline').textContent = t('unsetDeadline');
+    $('people-count').textContent = '—';
+    $('name').disabled = true;
+    $('join').disabled = true;
+    return;
+  }
   status = await api('status'); offset = status.serverTime - Date.now();
   $('budget').textContent = status.budget ? new Intl.NumberFormat(locale()).format(status.budget) + ' TL' : t('unsetBudget');
   $('deadline').textContent = status.deadline ? formatDate(status.deadline) : t('unsetDeadline');
@@ -56,7 +68,8 @@ async function loadPersonal() {
   ownResult = await api('result', { token });
   $('registration').hidden = true; $('success').hidden = false;
   $('welcome').textContent = t('welcome', { name:ownResult.name });
-  $('personal-link').value = location.origin + '/#k=' + token;
+  const personalUrl = new URL('./', location.href); personalUrl.hash = 'k=' + token;
+  $('personal-link').value = personalUrl.href;
   $('result-message').textContent = t(status.drawn ? 'arrived' : status.deadline && status.serverTime >= Date.parse(status.deadline) ? 'tooFew' : 'waiting');
   $('reveal').hidden = !ownResult.recipient || !$('gift').hidden;
 }
@@ -65,7 +78,7 @@ $('register-form').addEventListener('submit', async event => {
   try {
     const data = await api('register', { name: $('name').value }); token = data.token;
     // The token stays in the fragment; it is never sent in a URL to the server.
-    history.replaceState(null, '', '/#k=' + token);
+    history.replaceState(null, '', '#k=' + token);
     try { localStorage.setItem('neseli-token', token); } catch {}
     await refresh();
   } catch (error) { $('message').textContent = error.message; countdown(); }
@@ -76,6 +89,6 @@ $('copy').addEventListener('click', async () => {
 });
 $('reveal').addEventListener('click', () => { $('recipient').textContent = ownResult.recipient; $('gift').hidden = false; $('reveal').hidden = true; });
 refresh().catch(error => { $('message').textContent = error.message; });
-setInterval(() => refresh().catch(() => { $('message').textContent = t('connection'); }), 10000);
+if (!staticPreview) setInterval(() => refresh().catch(() => { $('message').textContent = t('connection'); }), 10000);
 setInterval(countdown, 1000);
 window.addEventListener('app-language', () => refresh().catch(error => { $('message').textContent = error.message; }));
