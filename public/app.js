@@ -1,6 +1,7 @@
-import { t, locale, translateError } from './i18n.js?v=organizer-8';
+import { t, locale, translateError } from './i18n.js?v=backend-9';
 import { ornamentLayout } from './ornaments.js';
 import { staticPreview } from './runtime.js';
+import { requestApi } from './connection.js';
 const $ = id => document.getElementById(id);
 const previewEnabled = new URL(location.href).searchParams.get('preview') === '1';
 let storedToken;
@@ -9,10 +10,8 @@ let status, token = location.hash.startsWith('#k=') ? location.hash.slice(3) : s
 if (token) { try { localStorage.setItem('neseli-token', token); } catch {} }
 let ownResult, offset = 0, lastCount = -1;
 const api = async (path, body) => {
-  const response = await fetch('/api/' + path, body === undefined ? {} : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-  const data = await response.json();
-  if (!response.ok) throw new Error(translateError(data.error || t('generic')));
-  return data;
+  try { return await requestApi(path,body); }
+  catch (error) { throw new Error(translateError(error.message)); }
 };
 const formatDate = value => new Intl.DateTimeFormat(locale(), { timeZone: 'Europe/Istanbul', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(value));
 function drawOrnaments(count) {
@@ -64,7 +63,7 @@ async function refresh() {
   if (token) await loadPersonal();
 }
 async function loadPersonal() {
-  ownResult = await api('result', { token });
+  if (!ownResult || (status.drawn && !ownResult.recipient)) ownResult = await api('result', { token });
   $('registration').hidden = true; $('success').hidden = false;
   $('welcome').textContent = t('welcome', { name:ownResult.name });
   const personalUrl = new URL('./', location.href); personalUrl.hash = 'k=' + token;

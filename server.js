@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { DrawStore, hash } from './store.js';
 import { makeRegistrationQr } from './qr.js';
+import { apiBase, supabaseUrl } from './public/config.js';
 
 const root = dirname(fileURLToPath(import.meta.url));
 const data = process.env.DATA_DIR || join(root, '.data');
@@ -14,14 +15,34 @@ if (!existsSync(keyFile)) writeFileSync(keyFile, randomBytes(32).toString('base6
 const adminHash = Buffer.from(hash(process.env.ADMIN_KEY || readFileSync(keyFile, 'utf8').trim()), 'hex');
 const store = new DrawStore(join(data, 'draw.sqlite'));
 const attempts = new Map();
+const connectOrigins = ["'self'"];
+for (const configured of [apiBase,supabaseUrl]) {
+  if (!configured) continue;
+  const parsed = new URL(configured);
+  if (parsed.protocol !== 'https:' || parsed.username || parsed.password) throw new Error('Backend URL must use HTTPS');
+  connectOrigins.push(parsed.origin);
+}
+const allowedOrigins = new Set((process.env.ALLOWED_ORIGINS || 'https://wisekina.github.io').split(',').map(s => s.trim()).filter(Boolean));
 const server = http.createServer(async (req, res) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Referrer-Policy', 'no-referrer');
   res.setHeader('Cache-Control', 'no-store');
-  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
+  res.setHeader('Content-Security-Policy', `default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src ${connectOrigins.join(" ")}; frame-ancestors 'none'; base-uri 'none'; form-action 'self'`);
   const url = new URL(req.url, 'http://localhost');
+  const origin = req.headers.origin;
+  const originAllowed = !origin || allowedOrigins.has(origin) || origin === `http://${req.headers.host}` || origin === `https://${req.headers.host}`;
+  if (origin && originAllowed) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  }
   const json = (status, body) => { res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' }); res.end(JSON.stringify(body)); };
   try {
+    if (req.method === 'OPTIONS' && url.pathname.startsWith('/api/')) {
+      if (!originAllowed) return json(403, { error: 'Geçersiz kaynak.' });
+      res.writeHead(204); return res.end();
+    }
     if (req.method === 'GET' && url.pathname === '/api/status') return json(200, store.status());
     if (req.method === 'GET' && url.pathname === '/api/qr') {
       const png = await makeRegistrationQr(url.searchParams.get('url'));
@@ -30,7 +51,7 @@ const server = http.createServer(async (req, res) => {
       return res.end(png);
     }
     if (req.method === 'POST' && url.pathname.startsWith('/api/')) {
-      if (req.headers.origin && req.headers.origin !== `http://${req.headers.host}` && req.headers.origin !== `https://${req.headers.host}`) return json(403, { error: 'Geçersiz kaynak.' });
+      if (!originAllowed) return json(403, { error: 'Geçersiz kaynak.' });
       if (!req.headers['content-type']?.startsWith('application/json')) return json(415, { error: 'JSON gerekli.' });
       const address = req.socket.remoteAddress;
       const now = Date.now();
@@ -48,15 +69,15 @@ const server = http.createServer(async (req, res) => {
         if (typeof body.token !== 'string' || body.token.length > 100) return json(400, { error: 'Kişisel bağlantı gerekli.' });
         return json(200, store.result(body.token));
       }
-      if (url.pathname === '/api/settings') {
+      if (url.pathname === '/api/settings' || url.pathname === '/api/admin/check') {
         const supplied = Buffer.from(hash(typeof body.key === 'string' ? body.key : ''), 'hex');
         if (!timingSafeEqual(supplied, adminHash)) return json(403, { error: 'Yönetim anahtarı geçersiz.' });
-        store.configure(body.deadline, body.budget);
+        if (url.pathname === '/api/settings') store.configure(body.deadline, body.budget);
         return json(200, store.status());
       }
       return json(404, { error: 'Bulunamadı.' });
     }
-    const files = { '/': ['index.html', 'text/html'], '/yonetim': ['admin.html', 'text/html'], '/admin.html': ['admin.html', 'text/html'], '/style.css': ['style.css', 'text/css'], '/celebration.css': ['celebration.css', 'text/css'], '/app.js': ['app.js', 'text/javascript'], '/admin.js': ['admin.js', 'text/javascript'], '/i18n.js': ['i18n.js', 'text/javascript'], '/runtime.js': ['runtime.js', 'text/javascript'], '/ornaments.js': ['ornaments.js', 'text/javascript'] };
+    const files = { '/': ['index.html', 'text/html'], '/yonetim': ['admin.html', 'text/html'], '/admin.html': ['admin.html', 'text/html'], '/style.css': ['style.css', 'text/css'], '/celebration.css': ['celebration.css', 'text/css'], '/app.js': ['app.js', 'text/javascript'], '/admin.js': ['admin.js', 'text/javascript'], '/i18n.js': ['i18n.js', 'text/javascript'], '/runtime.js': ['runtime.js', 'text/javascript'], '/config.js': ['config.js', 'text/javascript'], '/connection.js': ['connection.js', 'text/javascript'], '/qr-url.js': ['qr-url.js', 'text/javascript'], '/vendor/qrcode.js': ['vendor/qrcode.js', 'text/javascript'], '/ornaments.js': ['ornaments.js', 'text/javascript'] };
     if (req.method === 'GET' && files[url.pathname]) {
       const [file, type] = files[url.pathname];
       res.writeHead(200, { 'Content-Type': `${type}; charset=utf-8` });

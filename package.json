@@ -1,1 +1,17 @@
-{"name":"ofis-yilbasi","version":"1.0.0","private":true,"type":"module","engines":{"node":">=24"},"scripts":{"start":"node server.js","test":"node --test"},"dependencies":{"qrcode":"1.5.4"}}
+{
+  "name": "ofis-yilbasi",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "test:database": "bash scripts/test-database.sh"
+  },
+  "dependencies": {
+    "qrcode": "1.5.4"
+  }
+}

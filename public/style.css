@@ -8,3 +8,7 @@
 .preview-banner{max-width:1208px;margin:22px auto 0;padding:13px 20px;background:#ede8d6;border:1px solid #d9cfad;border-radius:9px;font-size:12px;line-height:1.7;color:#786232;position:relative}input:disabled{opacity:.6}@media(max-width:650px){.preview-banner{margin:20px 25px 0}}
 
 .brand > span{color:#eb0a1e;font-weight:800;letter-spacing:1px}
+
+.logout-button{background:transparent!important;color:#76806b!important;text-align:right;font-size:11px!important;padding:0!important;margin:10px 0}#login-message{font-size:12px;line-height:1.7;color:#a4523d}
+
+#admin-controls .form-card:first-of-type{margin-top:20px}

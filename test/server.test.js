@@ -24,6 +24,11 @@ test('HTTP: kalıcı kayıt, özel kartpostal, yönetim yetkisi ve otomatik çek
   const post = async (path, data) => { const response = await fetch(base + '/api/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); return { status: response.status, data: await response.json() }; };
   const page = await fetch(base); assert.match(await page.text(), /Kartpostalını açmak/);
   assert.match(page.headers.get('content-security-policy'), /frame-ancestors 'none'/);
+  const preflight = await fetch(base + '/api/register', { method: 'OPTIONS', headers: { Origin: 'https://wisekina.github.io', 'Access-Control-Request-Method': 'POST', 'Access-Control-Request-Headers': 'content-type' } });
+  assert.equal(preflight.status, 204);
+  assert.equal(preflight.headers.get('access-control-allow-origin'), 'https://wisekina.github.io');
+  const blocked = await fetch(base + '/api/register', { method: 'POST', headers: { Origin: 'https://untrusted.example', 'Content-Type': 'application/json' }, body: JSON.stringify({ name:'Untrusted' }) });
+  assert.equal(blocked.status, 403);
   const qr = await fetch(base + '/api/qr?url=' + encodeURIComponent('https://example.com/') + '&download=1');
   assert.equal(qr.status, 200);
   assert.equal(qr.headers.get('content-type'), 'image/png');
@@ -31,6 +36,8 @@ test('HTTP: kalıcı kayıt, özel kartpostal, yönetim yetkisi ve otomatik çek
   assert.equal((await fetch(base + '/api/qr?url=' + encodeURIComponent('https://example.com/#k=secret'))).status, 400);
   const config = { deadline: new Date(Date.now() + 2200).toISOString(), budget: 1500 };
   assert.equal((await post('settings', { ...config, key: 'wrong' })).status, 403);
+  assert.equal((await post('admin/check', { key: 'wrong' })).status, 403);
+  assert.equal((await post('admin/check', { key: 'test-only-key' })).status, 200);
   assert.equal((await post('settings', { ...config, key: 'test-only-key' })).status, 200);
   const a = await post('register', { name: 'Deniz' }); const b = await post('register', { name: 'Ece' });
   assert.equal(a.status, 201); assert.equal(b.status, 201);

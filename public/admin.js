@@ -1,53 +1,66 @@
-import { t, translateError } from './i18n.js?v=toyota-4';
+import { t, translateError } from './i18n.js?v=backend-9';
 import { staticPreview } from './runtime.js';
-const form = document.getElementById('settings');
-if (!staticPreview) fetch('/api/status').then(r => r.json()).then(data => {
-  if (data.deadline) {
-    const parts = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Istanbul', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(data.deadline));
-    document.getElementById('deadline').value = parts.replace(' ', 'T');
-  }
-  if (data.budget) document.getElementById('budget').value = data.budget;
-}).catch(() => { document.getElementById('message').textContent = t('connection'); });
-form.addEventListener('submit', async event => {
-  event.preventDefault(); const button = form.querySelector('button'); button.disabled = true;
-  try {
-    const response = await fetch('/api/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: document.getElementById('key').value, deadline: document.getElementById('deadline').value + ':00+03:00', budget: Number(document.getElementById('budget').value) }) });
-    const result = await response.json(); if (!response.ok) throw new Error(translateError(result.error));
-    document.getElementById('message').textContent = t('settingsSaved'); document.getElementById('key').value = '';
-  } catch (error) { document.getElementById('message').textContent = error.message; }
-  finally { button.disabled = false; }
-});
-
-const qrForm = document.getElementById('qr-form');
-const qrUrl = document.getElementById('qr-url');
-const qrMessage = document.getElementById('qr-message');
-const qrImage = document.getElementById('qr-image');
+import { requestApi, usesSupabase, loginOrganizer, logoutOrganizer } from './connection.js';
+import { registrationUrl } from './qr-url.js';
+import { toDataURL } from './vendor/qrcode.js';
+const $ = id => document.getElementById(id);
+let organizerKey = null;
 let qrReady = false;
-if (location.protocol === 'https:' && !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname)) qrUrl.value = location.origin + '/';
-else qrMessage.textContent = t('qrNeedsUrl');
-qrForm.addEventListener('submit', async event => {
-  event.preventDefault();
-  const button = qrForm.querySelector('button'); button.disabled = true;
-  document.getElementById('qr-card').hidden = true; qrReady = false; qrMessage.textContent = '';
+$('supabase-login-fields').hidden = !usesSupabase;
+$('node-login-fields').hidden = usesSupabase;
+$('admin-email').required = usesSupabase;
+$('admin-password').required = usesSupabase;
+$('key').required = !usesSupabase;
+function fillSettings(data) {
+  if (data.deadline) $('deadline').value = new Intl.DateTimeFormat('sv-SE', { timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false }).format(new Date(data.deadline)).replace(' ','T');
+  if (data.budget) $('budget').value = data.budget;
+  const closed = !!data.drawn || (!!data.deadline && Date.parse(data.deadline) <= data.serverTime);
+  for (const field of $('settings').querySelectorAll('input,button')) field.disabled = closed;
+}
+$('admin-login').addEventListener('submit', async event => {
+  event.preventDefault(); const button = event.currentTarget.querySelector('button'); button.disabled = true;
+  $('login-message').textContent = '';
   try {
-    const query = new URLSearchParams({ url: qrUrl.value.trim() });
-    const response = await fetch('/api/qr?' + query);
-    if (!response.ok) { const error = await response.json(); throw new Error(translateError(error.error)); }
-    // Browser loads the same-origin PNG; no third-party QR service receives the URL.
-    await new Promise((resolve, reject) => { qrImage.onload = resolve; qrImage.onerror = () => reject(new Error(t('connection'))); qrImage.src = '/api/qr?' + query; });
-    document.getElementById('qr-destination').textContent = new URL(qrUrl.value.trim()).origin + '/';
-    document.getElementById('qr-download').href = '/api/qr?' + query + '&download=1';
-    qrImage.alt = t('qrAlt');
-    document.getElementById('qr-card').hidden = false; qrReady = true; qrMessage.textContent = t('qrReady');
-  } catch (error) { qrMessage.textContent = error.message; }
+    const data = await loginOrganizer({ email:$('admin-email').value,password:$('admin-password').value,key:$('key').value });
+    organizerKey = usesSupabase ? null : $('key').value;
+    $('key').value = ''; $('admin-password').value = '';
+    fillSettings(data); $('admin-login').hidden = true; $('admin-controls').hidden = false;
+  } catch (error) { $('login-message').textContent = translateError(error.message); }
   finally { button.disabled = false; }
 });
-window.addEventListener('app-language', () => { qrImage.alt = t('qrAlt'); qrMessage.textContent = qrReady ? t('qrReady') : qrUrl.value ? '' : t('qrNeedsUrl'); });
-if (staticPreview) {
-  for (const control of document.querySelectorAll('form input,form button')) control.disabled = true;
-  const explainPreview = () => {
-    document.getElementById('message').textContent = t('previewBanner');
-    qrMessage.textContent = t('previewBanner');
-  };
-  explainPreview(); window.addEventListener('app-language', explainPreview);
+$('admin-logout').addEventListener('click', () => {
+  logoutOrganizer(); organizerKey = null; $('admin-controls').hidden = true; $('admin-login').hidden = false;
+  $('message').textContent = ''; $('login-message').textContent = '';
+});
+$('settings').addEventListener('submit', async event => {
+  event.preventDefault(); const button = event.currentTarget.querySelector('button'); button.disabled = true;
+  try {
+    const data = await requestApi('settings', { key:organizerKey,deadline:$('deadline').value+':00+03:00',budget:Number($('budget').value) });
+    fillSettings(data); $('message').textContent = t('settingsSaved');
+  } catch (error) { $('message').textContent = translateError(error.message); }
+  finally { button.disabled = false; }
+});
+const rootUrl = new URL('./', location.href);
+if (location.protocol === 'https:' && !['localhost','127.0.0.1','[::1]'].includes(location.hostname)) $('qr-url').value = rootUrl.href;
+else $('qr-message').textContent = t('qrNeedsUrl');
+$('qr-form').addEventListener('submit', async event => {
+  event.preventDefault(); const button = event.currentTarget.querySelector('button'); button.disabled = true;
+  $('qr-card').hidden = true; qrReady = false; $('qr-message').textContent = '';
+  try {
+    const url = registrationUrl($('qr-url').value.trim());
+    const png = await toDataURL(url, { width:720,margin:4,errorCorrectionLevel:'H',color:{dark:'#173b2d',light:'#ffffff'} });
+    $('qr-image').src = png; $('qr-image').alt = t('qrAlt'); $('qr-destination').textContent = url;
+    $('qr-download').href = png; $('qr-card').hidden = false; qrReady = true; $('qr-message').textContent = t('qrReady');
+  } catch (error) { $('qr-message').textContent = translateError(error.message); }
+  finally { button.disabled = false; }
+});
+function previewExplanation() {
+  if (!staticPreview) return;
+  $('login-message').textContent = t('backendMissing');
+  for (const control of $('admin-login').querySelectorAll('input,button')) control.disabled = true;
 }
+window.addEventListener('app-language', () => {
+  $('qr-image').alt = t('qrAlt'); $('qr-message').textContent = qrReady ? t('qrReady') : $('qr-url').value ? '' : t('qrNeedsUrl');
+  previewExplanation();
+});
+previewExplanation();
