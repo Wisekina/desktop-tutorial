@@ -1,0 +1,13 @@
+{
+  "name": "Neşeli Ofis",
+  "image": "node:24-bookworm",
+  "remoteUser": "node",
+  "postCreateCommand": "npm ci",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Neşeli Ofis",
+      "onAutoForward": "openBrowser"
+    }
+  }
+}
