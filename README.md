@@ -4,7 +4,7 @@ Türkçe ve Japonca arayüzlü ofis yılbaşı çekilişi. Katılımcılar kaydo
 
 ## GitHub Pages'de arayüz
 
-[Yılbaşı ekranını aç](https://wisekina.github.io/desktop-tutorial/public/). GitHub Pages ayarı `main` dalı ve kök dizin (`/`) olduğunda ana adres de otomatik olarak bu ekrana yönlenir. Pages sunucu çalıştırmaz; arayüz ayrı bir backend'e bağlanabilir. Canlı backend henüz ayarlanmadığı için şu anda kayıt ve çekiliş kapalıdır. Önizleme veri kaydetmez ve kayıt başarılı gibi davranmaz. Supabase kurulum dosyaları ve bağlantı desteği hazır: [supabase/README.md](supabase/README.md). Alternatif olarak mevcut Node.js sunucusu HTTPS ve kalıcı diskle yayınlanıp public/config.js içindeki apiBase alanına bağlanabilir.
+[Yılbaşı ekranını aç](https://wisekina.github.io/desktop-tutorial/public/). GitHub Pages ayarı `main` dalı ve kök dizin (`/`) olduğunda ana adres de otomatik olarak bu ekrana yönlenir. Pages sunucu çalıştırmaz; arayüz ayrı bir backend'e bağlanabilir. Supabase proje bağlantısı yapılandırılmıştır. Kayıtlar organizatör tarih ve bütçeyi belirleyene kadar kapalıdır; canlı sağlayıcıda bağlantı ve zamanlama görevi ayrıca doğrulanmalıdır. Önizleme veri kaydetmez ve kayıt başarılı gibi davranmaz. Supabase kurulum dosyaları ve bağlantı desteği hazır: [supabase/README.md](supabase/README.md). Alternatif olarak mevcut Node.js sunucusu HTTPS ve kalıcı diskle yayınlanıp public/config.js içindeki apiBase alanına bağlanabilir.
 
 ## Bilgisayarına indirmeden tam uygulamayı dene
 

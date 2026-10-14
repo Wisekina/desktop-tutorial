@@ -1,6 +1,6 @@
-import { t, translateError } from './i18n.js?v=backend-9';
-import { staticPreview } from './runtime.js';
-import { requestApi, usesSupabase, loginOrganizer, logoutOrganizer } from './connection.js';
+import { t, translateError } from './i18n.js?v=live-10';
+import { staticPreview } from './runtime.js?v=live-10';
+import { requestApi, usesSupabase, loginOrganizer, logoutOrganizer } from './connection.js?v=live-10';
 import { registrationUrl } from './qr-url.js';
 import { toDataURL } from './vendor/qrcode.js';
 const $ = id => document.getElementById(id);

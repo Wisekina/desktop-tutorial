@@ -1,4 +1,4 @@
-import { apiBase, supabaseUrl, supabasePublishableKey } from './config.js';
+import { apiBase, supabaseUrl, supabasePublishableKey } from './config.js?v=live-10';
 export const usesSupabase = Boolean(supabaseUrl && supabasePublishableKey);
 let adminSession = null;
 

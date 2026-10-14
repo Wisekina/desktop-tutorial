@@ -1,7 +1,7 @@
-import { t, locale, translateError } from './i18n.js?v=backend-9';
+import { t, locale, translateError } from './i18n.js?v=live-10';
 import { ornamentLayout } from './ornaments.js';
-import { staticPreview } from './runtime.js';
-import { requestApi } from './connection.js';
+import { staticPreview } from './runtime.js?v=live-10';
+import { requestApi } from './connection.js?v=live-10';
 const $ = id => document.getElementById(id);
 const previewEnabled = new URL(location.href).searchParams.get('preview') === '1';
 let storedToken;

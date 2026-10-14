@@ -5,5 +5,5 @@
 export const apiBase = '';
 // Supabase is optional. Only the project URL and PUBLIC publishable/anon key
 // belong here. Never use a secret key, service_role key or database password.
-export const supabaseUrl = '';
-export const supabasePublishableKey = '';
+export const supabaseUrl = 'https://penblpkkhtsqwlaywawu.supabase.co';
+export const supabasePublishableKey = 'sb_publishable_U2p6VvtxOTNXnk1b6s59Zw_HtTXlpxV';
