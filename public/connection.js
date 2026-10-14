@@ -1,4 +1,4 @@
-import { apiBase, supabaseUrl, supabasePublishableKey } from './config.js?v=live-10';
+import { apiBase, supabaseUrl, supabasePublishableKey } from './config.js?v=participants-11';
 export const usesSupabase = Boolean(supabaseUrl && supabasePublishableKey);
 let adminSession = null;
 
@@ -37,11 +37,12 @@ export async function requestApi(path, body) {
   if (usesSupabase) {
     const calls = {
       status:['gift_status',{}], register:['gift_register',{ p_name:body?.name }], result:['gift_result',{ p_token:body?.token }],
-      settings:['gift_configure',{ p_deadline:body?.deadline,p_budget:body?.budget }], 'admin/check':['gift_admin_status',{}]
+      settings:['gift_configure',{ p_deadline:body?.deadline,p_budget:body?.budget }], 'admin/check':['gift_admin_status',{}],
+      'admin/participants':['gift_admin_participants',{}], 'admin/delete':['gift_delete_registration',{p_id:body?.id}]
     };
     if (!calls[path]) throw new Error('Desteklenmeyen işlem.');
     const [name, args] = calls[path];
-    const token = ['settings','admin/check'].includes(path) ? await authorizedSession() : undefined;
+    const token = path === 'settings' || path.startsWith('admin/') ? await authorizedSession() : undefined;
     return supabaseFetch('rest/v1/rpc/' + name, args, token);
   }
   const response = await fetch(apiUrl(path), body === undefined ? {} : { method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body) });

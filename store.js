@@ -10,6 +10,9 @@ export class DrawStore {
       CREATE TABLE IF NOT EXISTS settings (id INTEGER PRIMARY KEY CHECK(id=1), deadline TEXT, budget INTEGER, drawn INTEGER DEFAULT 0);
       INSERT OR IGNORE INTO settings(id) VALUES(1);
       CREATE TABLE IF NOT EXISTS people (id INTEGER PRIMARY KEY, name TEXT NOT NULL, token TEXT UNIQUE NOT NULL, recipient INTEGER REFERENCES people(id));`);
+    if (!this.db.prepare('PRAGMA table_info(people)').all().some(column => column.name === 'created_at')) {
+      this.db.exec('ALTER TABLE people ADD COLUMN created_at TEXT');
+    }
   }
   config() { return this.db.prepare('SELECT deadline,budget,drawn FROM settings WHERE id=1').get(); }
   configure(deadline, budget) {
@@ -29,7 +32,7 @@ export class DrawStore {
     const existing = this.db.prepare('SELECT name FROM people').all();
     if (existing.some(p => p.name.toLocaleLowerCase('tr') === name.toLocaleLowerCase('tr'))) throw new Error('Bu isim zaten kayıtlı. Aynı isimdeyseniz ayırt edici bir ek kullanın.');
     const token = randomBytes(32).toString('base64url');
-    this.db.prepare('INSERT INTO people(name,token) VALUES(?,?)').run(name, hash(token));
+    this.db.prepare('INSERT INTO people(name,token,created_at) VALUES(?,?,?)').run(name, hash(token),new Date(this.clock()).toISOString());
     return token;
   }
   drawIfDue() {
@@ -65,6 +68,21 @@ export class DrawStore {
     const person = this.db.prepare('SELECT p.name,r.name AS recipient FROM people p LEFT JOIN people r ON r.id=p.recipient WHERE p.token=?').get(hash(token));
     if (!person) throw new Error('Kişisel bağlantı geçersiz.');
     return { name: person.name, recipient: person.recipient ?? null };
+  }
+  participants() {
+    this.drawIfDue();
+    const config = this.config();
+    return {
+      participants:this.db.prepare('SELECT id,name,created_at FROM people ORDER BY id').all(),
+      canDelete:!config.drawn && (!config.deadline || Date.parse(config.deadline)>this.clock())
+    };
+  }
+  deleteRegistration(id) {
+    const config = this.config();
+    if (config.drawn || (config.deadline && Date.parse(config.deadline)<=this.clock())) throw new Error('Kayıtlar kapandıktan sonra silme yapılamaz.');
+    if (!Number.isSafeInteger(id) || id<1) throw new Error('Kayıt bulunamadı.');
+    if (!this.db.prepare('DELETE FROM people WHERE id=?').run(id).changes) throw new Error('Kayıt bulunamadı.');
+    return this.participants();
   }
   close() { this.db.close(); }
 }

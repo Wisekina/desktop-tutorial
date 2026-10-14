@@ -1,14 +1,14 @@
-import { t, locale, translateError } from './i18n.js?v=live-10';
+import { t, locale, translateError } from './i18n.js?v=participants-11';
 import { ornamentLayout } from './ornaments.js';
-import { staticPreview } from './runtime.js?v=live-10';
-import { requestApi } from './connection.js?v=live-10';
+import { staticPreview } from './runtime.js?v=participants-11';
+import { requestApi } from './connection.js?v=participants-11';
 const $ = id => document.getElementById(id);
 const previewEnabled = new URL(location.href).searchParams.get('preview') === '1';
 let storedToken;
 try { storedToken = localStorage.getItem('neseli-token'); } catch {}
 let status, token = location.hash.startsWith('#k=') ? location.hash.slice(3) : storedToken;
 if (token) { try { localStorage.setItem('neseli-token', token); } catch {} }
-let ownResult, offset = 0, lastCount = -1;
+let ownResult, ownResultCount, ownResultLastChecked = 0, offset = 0, lastCount = -1;
 const api = async (path, body) => {
   try { return await requestApi(path,body); }
   catch (error) { throw new Error(translateError(error.message)); }
@@ -63,7 +63,19 @@ async function refresh() {
   if (token) await loadPersonal();
 }
 async function loadPersonal() {
-  if (!ownResult || (status.drawn && !ownResult.recipient)) ownResult = await api('result', { token });
+  if (!ownResult || (ownResultCount !== undefined && status.count < ownResultCount) || Date.now()-ownResultLastChecked >= 60000 || (status.drawn && !ownResult.recipient)) {
+    try { ownResult = await api('result', { token }); ownResultCount = status.count; ownResultLastChecked = Date.now(); }
+    catch (error) {
+      if (error.message !== translateError('Kişisel bağlantı geçersiz.')) throw error;
+      try { if (localStorage.getItem('neseli-token') === token) localStorage.removeItem('neseli-token'); } catch {}
+      token = undefined; ownResult = null; ownResultCount = undefined;
+      history.replaceState(null,'',location.pathname+location.search);
+      $('success').hidden = true; $('registration').hidden = false; $('gift').hidden = true; $('reveal').hidden = true;
+      $('message').textContent = t('registrationRemoved');
+      return;
+    }
+  }
+  ownResultCount = status.count;
   $('registration').hidden = true; $('success').hidden = false;
   $('welcome').textContent = t('welcome', { name:ownResult.name });
   const personalUrl = new URL('./', location.href); personalUrl.hash = 'k=' + token;

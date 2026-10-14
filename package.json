@@ -12,6 +12,7 @@
     "test:database": "bash scripts/test-database.sh"
   },
   "dependencies": {
+    "fflate": "0.8.2",
     "qrcode": "1.5.4"
   }
 }

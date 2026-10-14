@@ -49,3 +49,13 @@ QR, organizatörün tarayıcısında oluşturulur. Pages için tam ana ekran adr
 ## Doğrulama kapsamı
 
 `npm test` Node.js sunucusunu ve süs/QR kurallarını doğrular. Docker bulunan geliştirme ortamında `npm run test:database`, gerçek PostgreSQL üzerinde tablo erişimini, organizatör iznini, kayıt kapanışını ve eşleşmelerin sabitliğini doğrular; fixture kullanıcıları ve kayıtları gerçek Supabase projesine yazmaz. Gerçek Supabase Auth, pg_cron ve canlı Pages bağlantısı ayrıca doğrulanmalıdır. Proje sahibi veritabanı yönetim araçlarıyla veriye erişebilir; bu yetki katılımcılara verilmez.
+
+## Katılımcıları yönet ve Excel indir
+
+SQL Editor'da [04-participant-management.sql](04-participant-management.sql) dosyasını çalıştırın. Bu işlem mevcut kayıtları silmez veya tabloları public şemasına taşımaz. Yönetim ekranına giriş yapınca Katılımcılar tablosu kayıtları gösterir. Yenile ile yeni kayıtları alın, Excel indir ile isim ve kayıt tarihlerini .xlsx olarak kaydedin. Sil düğmesi yalnızca kayıt süresi açıkken çalışır; onaydan sonra o kişisel erişim bağlantısı geçersiz olur. Süre bittiğinde silme kapalıdır. Liste ve silme fonksiyonları anonim veya organizatör olmayan hesaplara kapalıdır.
+
+Table Editor varsayılan olarak public şemasını gösterir. Kayıtlar office_private.participants tablosundadır; şema seçicisinde office_private görünüyorsa seçebilirsiniz. Panelde görünmese bile yönetim tablosu yetkili fonksiyon üzerinden kayıtları okuyabilir. Tabloları public'e taşımanız veya anonim tablo erişimi açmanız gerekmez.
+
+## Gerçek etkinliğe dokunmadan çekilişi dene
+
+Yönetici ekranında Deneme çekilişi bağlantısını açın veya [test-draw.html](../public/test-draw.html) sayfasını kullanın. 25 yapay katılımcı tarayıcı belleğinde eşleştirilir; hiçbir kayıt veya sonuç isteği Supabase'e gönderilmez. Kartpostala tıklayınca örnek katılımcının alıcısı görünür. Bu arayüz denemesidir; gerçek Supabase etkinliğinin tarihini, kayıtlarını veya sabit eşleşmelerini değiştirmez. Yerel PostgreSQL testleri asıl çekiliş fonksiyonunu ayrıca sınar.

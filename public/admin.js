@@ -1,10 +1,13 @@
-import { t, translateError } from './i18n.js?v=live-10';
-import { staticPreview } from './runtime.js?v=live-10';
-import { requestApi, usesSupabase, loginOrganizer, logoutOrganizer } from './connection.js?v=live-10';
+import { t, translateError } from './i18n.js?v=participants-11';
+import { staticPreview } from './runtime.js?v=participants-11';
+import { requestApi, usesSupabase, loginOrganizer, logoutOrganizer } from './connection.js?v=participants-11';
 import { registrationUrl } from './qr-url.js';
 import { toDataURL } from './vendor/qrcode.js';
+import { participantWorkbook } from './excel.js';
 const $ = id => document.getElementById(id);
 let organizerKey = null;
+let organizerLoggedIn = false;
+let participantData = null;
 let qrReady = false;
 $('supabase-login-fields').hidden = !usesSupabase;
 $('node-login-fields').hidden = usesSupabase;
@@ -24,11 +27,13 @@ $('admin-login').addEventListener('submit', async event => {
     const data = await loginOrganizer({ email:$('admin-email').value,password:$('admin-password').value,key:$('key').value });
     organizerKey = usesSupabase ? null : $('key').value;
     $('key').value = ''; $('admin-password').value = '';
-    fillSettings(data); $('admin-login').hidden = true; $('admin-controls').hidden = false;
+    fillSettings(data); $('admin-login').hidden = true; $('admin-controls').hidden = false; organizerLoggedIn = true;
+    await loadParticipants();
   } catch (error) { $('login-message').textContent = translateError(error.message); }
   finally { button.disabled = false; }
 });
 $('admin-logout').addEventListener('click', () => {
+  organizerLoggedIn = false; participantData = null; $('participants-list').replaceChildren();
   logoutOrganizer(); organizerKey = null; $('admin-controls').hidden = true; $('admin-login').hidden = false;
   $('message').textContent = ''; $('login-message').textContent = '';
 });
@@ -37,6 +42,7 @@ $('settings').addEventListener('submit', async event => {
   try {
     const data = await requestApi('settings', { key:organizerKey,deadline:$('deadline').value+':00+03:00',budget:Number($('budget').value) });
     fillSettings(data); $('message').textContent = t('settingsSaved');
+    await loadParticipants();
   } catch (error) { $('message').textContent = translateError(error.message); }
   finally { button.disabled = false; }
 });
@@ -61,6 +67,72 @@ function previewExplanation() {
 }
 window.addEventListener('app-language', () => {
   $('qr-image').alt = t('qrAlt'); $('qr-message').textContent = qrReady ? t('qrReady') : $('qr-url').value ? '' : t('qrNeedsUrl');
+  if (participantData) renderParticipants(participantData);
   previewExplanation();
 });
 previewExplanation();
+
+function renderParticipants(data) {
+  participantData = data;
+  $('export-participants').disabled = !data.participants.length;
+  $('participants-count').textContent = t('participantsCount',{count:data.participants.length});
+  $('participants-lock').hidden = data.canDelete;
+  $('participants-list').replaceChildren();
+  for (const person of data.participants) {
+    const row = document.createElement('tr');
+    const details = document.createElement('td');
+    const dateCell = document.createElement('td');
+    const actionCell = document.createElement('td');
+    const name = document.createElement('strong'); name.textContent = person.name; details.append(name);
+    if (person.created_at) {
+      const time = document.createElement('small');
+      time.textContent = new Intl.DateTimeFormat(document.documentElement.lang === 'ja' ? 'ja-JP' : 'tr-TR',{timeZone:'Europe/Istanbul',dateStyle:'short',timeStyle:'short'}).format(new Date(person.created_at));
+      dateCell.append(time);
+    }
+    const button = document.createElement('button'); button.type = 'button'; button.className = 'delete-participant';
+    button.textContent = t('deleteParticipant'); button.disabled = !data.canDelete;
+    button.addEventListener('click',async () => {
+      if (!window.confirm(t('confirmDelete',{name:person.name}))) return;
+      button.disabled = true; $('participants-message').textContent = '';
+      try {
+        const updated = await requestApi('admin/delete',{id:person.id,key:organizerKey});
+        if (!organizerLoggedIn) return;
+        renderParticipants(updated); $('participants-message').textContent = t('participantDeleted');
+      } catch (error) {
+        $('participants-message').textContent = translateError(error.message);
+        await loadParticipants();
+      }
+    });
+    actionCell.append(button);
+    row.append(details,dateCell,actionCell); $('participants-list').append(row);
+  }
+  if (!data.participants.length) {
+    const empty = document.createElement('tr'); const cell = document.createElement('td'); cell.colSpan = 3; cell.textContent = t('participantsEmpty'); empty.append(cell); $('participants-list').append(empty);
+  }
+}
+async function loadParticipants() {
+  $('participants-message').textContent = '';
+  const button = $('refresh-participants'); button.disabled = true;
+  try {
+    const data = await requestApi('admin/participants',{key:organizerKey});
+    if (organizerLoggedIn) renderParticipants(data);
+  } catch (error) {
+    if (organizerLoggedIn) $('participants-message').textContent = error.message.includes('gift_admin_participants') ? t('participantsSetupMissing') : translateError(error.message);
+  } finally { button.disabled = false; }
+}
+$('refresh-participants').addEventListener('click',loadParticipants);
+
+$('export-participants').addEventListener('click', async () => {
+  const button = $('export-participants'); button.disabled = true; $('participants-message').textContent='';
+  try {
+    const data = await requestApi('admin/participants',{key:organizerKey});
+    if (!organizerLoggedIn) return;
+    renderParticipants(data);
+    const bytes = participantWorkbook(data.participants,{nameHeader:t('excelName'),dateHeader:t('excelDate'),sheetName:t('excelSheet'),locale:document.documentElement.lang==='ja'?'ja-JP':'tr-TR'});
+    const blob = new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const url = URL.createObjectURL(blob); const link = document.createElement('a');
+    link.href=url; link.download='TOYOTA-katilimcilar-'+new Date().toISOString().slice(0,10)+'.xlsx';
+    document.body.append(link); link.click(); link.remove(); setTimeout(()=>URL.revokeObjectURL(url),10000);
+  } catch(error) { $('participants-message').textContent=translateError(error.message); }
+  finally { button.disabled=!participantData?.participants.length; }
+});

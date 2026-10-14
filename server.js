@@ -69,15 +69,17 @@ const server = http.createServer(async (req, res) => {
         if (typeof body.token !== 'string' || body.token.length > 100) return json(400, { error: 'Kişisel bağlantı gerekli.' });
         return json(200, store.result(body.token));
       }
-      if (url.pathname === '/api/settings' || url.pathname === '/api/admin/check') {
+      if (['/api/settings','/api/admin/check','/api/admin/participants','/api/admin/delete'].includes(url.pathname)) {
         const supplied = Buffer.from(hash(typeof body.key === 'string' ? body.key : ''), 'hex');
         if (!timingSafeEqual(supplied, adminHash)) return json(403, { error: 'Yönetim anahtarı geçersiz.' });
+        if (url.pathname === '/api/admin/participants') return json(200,store.participants());
+        if (url.pathname === '/api/admin/delete') return json(200,store.deleteRegistration(body.id));
         if (url.pathname === '/api/settings') store.configure(body.deadline, body.budget);
         return json(200, store.status());
       }
       return json(404, { error: 'Bulunamadı.' });
     }
-    const files = { '/': ['index.html', 'text/html'], '/yonetim': ['admin.html', 'text/html'], '/admin.html': ['admin.html', 'text/html'], '/style.css': ['style.css', 'text/css'], '/celebration.css': ['celebration.css', 'text/css'], '/app.js': ['app.js', 'text/javascript'], '/admin.js': ['admin.js', 'text/javascript'], '/i18n.js': ['i18n.js', 'text/javascript'], '/runtime.js': ['runtime.js', 'text/javascript'], '/config.js': ['config.js', 'text/javascript'], '/connection.js': ['connection.js', 'text/javascript'], '/qr-url.js': ['qr-url.js', 'text/javascript'], '/vendor/qrcode.js': ['vendor/qrcode.js', 'text/javascript'], '/ornaments.js': ['ornaments.js', 'text/javascript'] };
+    const files = { '/': ['index.html', 'text/html'], '/yonetim': ['admin.html', 'text/html'], '/admin.html': ['admin.html', 'text/html'], '/style.css': ['style.css', 'text/css'], '/celebration.css': ['celebration.css', 'text/css'], '/app.js': ['app.js', 'text/javascript'], '/admin.js': ['admin.js', 'text/javascript'], '/i18n.js': ['i18n.js', 'text/javascript'], '/runtime.js': ['runtime.js', 'text/javascript'], '/config.js': ['config.js', 'text/javascript'], '/connection.js': ['connection.js', 'text/javascript'], '/qr-url.js': ['qr-url.js', 'text/javascript'], '/vendor/qrcode.js': ['vendor/qrcode.js', 'text/javascript'], '/vendor/zip.js': ['vendor/zip.js', 'text/javascript'], '/excel.js': ['excel.js', 'text/javascript'], '/test-draw.html': ['test-draw.html', 'text/html'], '/demo-draw.js': ['demo-draw.js', 'text/javascript'], '/ornaments.js': ['ornaments.js', 'text/javascript'] };
     if (req.method === 'GET' && files[url.pathname]) {
       const [file, type] = files[url.pathname];
       res.writeHead(200, { 'Content-Type': `${type}; charset=utf-8` });

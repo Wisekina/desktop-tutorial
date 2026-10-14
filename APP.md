@@ -38,3 +38,9 @@ GitHub Pages arayüzü iki seçeneği destekler:
 Yönetim formu doğru kimlik ve yetki kontrolü yapılmadan görünmez. Giriş şifresi/anahtarı diske veya tarayıcı depolamasına kaydedilmez. Supabase oturumu yalnızca açık sayfanın belleğinde tutulur; sayfa yenilenince yeniden giriş gerekir. Sunucu ve veritabanı sahiplerinin teknik erişimi vardır; katılımcılara tablo/sonuç listesi erişimi verilmez.
 
 Canlı sağlayıcı hesabı, Supabase Auth ve cron görevi bu depoyu yayınlamakla otomatik kurulmaz. Yerel PostgreSQL izin ve çekiliş testleri ile sahte sağlayıcı yanıtları kullanan arayüz testleri başarılıdır; gerçek sağlayıcıda uçtan uca kontrol yapılmadan uygulamayı kayıt almaya hazır saymayın.
+
+## Katılımcı tablosu ve Excel
+
+Supabase için supabase/04-participant-management.sql bir kez uygulanmalıdır. Yönetim ekranındaki katılımcı tablosu ve .xlsx indirimi giriş yapmış organizatör için çalışır. Dosya isim ve kayıt tarihlerini içerir; dışa aktarım en güncel listeyi tekrar okuyarak yapılır. Kayıt silme kapanıştan önce tek tek ve onayla yapılabilir; kapanıştan sonra eşleşmeler korunur. Node.js sürümü de aynı işlemleri özel yönetim anahtarıyla korur.
+
+public/test-draw.html yalnızca arayüz denemesidir. 25 yapay katılımcıyla tarayıcıda çekiliş yapar; gerçek Supabase verisine erişmez.

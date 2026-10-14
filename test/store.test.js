@@ -50,3 +50,15 @@ test('iki kişi birbirini çeker; tek kişide sonuç üretilmez', t => {
   single.clock = () => Date.parse('2027-01-01');
   assert.equal(single.status().drawn, false);
 });
+
+test('yönetici silmesi tokenı geçersiz kılar; kapanış ve çekilişten sonra silinemez', t => {
+  const {store,deadline,advance}=fixture(t); store.configure(deadline,1000);
+  const token=store.register('Silinecek kişi');const other=store.register('Kalacak kişi');
+  const list=store.participants();assert.equal(list.canDelete,true);assert.equal(list.participants.length,2);
+  assert.ok(!JSON.stringify(list).includes(token));assert.ok(!('token' in list.participants[0]));
+  store.deleteRegistration(list.participants[0].id);
+  assert.throws(()=>store.result(token),/geçersiz/);assert.equal(store.status().count,1);assert.equal(store.result(other).name,'Kalacak kişi');
+  store.register('Silinecek kişi');assert.throws(()=>store.deleteRegistration(9999),/bulunamadı/);
+  advance();assert.throws(()=>store.deleteRegistration(store.participants().participants[0].id),/silme yapılamaz/);
+  assert.equal(store.participants().canDelete,false);assert.equal(store.status().drawn,true);
+});
