@@ -26,6 +26,12 @@ Object.assign(tr, {previewBanner:'Arayüz önizlemesi · Ortak kayıt ve çekili
 Object.assign(ja, {previewBanner:'画面プレビュー · 参加登録と抽選はまだ開始していません。', previewMessage:'新年の画面は準備できました。参加登録と個人の抽選結果にはデータベースの接続が必要です。このページではまだ登録できません。'});
 Object.assign(tr, {hero:'Yeni yılın<br><em>en tatlı sırrı.</em>', budgetLabel:'HEDİYE LİMİTİ', deadlineLabel:'SON KAYIT', namePlaceholder:'Adın ve soyadın', join:'Katıl', peopleSuffix:'süs, bir sürü neşe', unsetBudget:'Belirlenmedi', unsetDeadline:'Yakında', notConfigured:'Kayıtlar yakında açılacak.', previewBanner:'Önizleme · Kayıtlar henüz açık değil.', previewMessage:'', success:'Kayıt başarıyla yapılmıştır.', welcome:'{name}, süsün ağaçta!', waiting:'Çekiliş günü kartpostalın burada.', arrived:'Kartpostalın geldi!', adminLink:'Organizatör köşesi'});
 Object.assign(ja, {hero:'新年の<br><em>小さな秘密。</em>', budgetLabel:'プレゼント上限', deadlineLabel:'登録締め切り', namePlaceholder:'氏名', join:'参加する', peopleSuffix:'個の飾り、たくさんの笑顔', unsetBudget:'未定', unsetDeadline:'近日発表', notConfigured:'登録はまもなく開始します。', previewBanner:'プレビュー · 登録はまだ開始していません。', previewMessage:'', welcome:'{name}さん、飾りがツリーに！', waiting:'抽選の日にカードが届きます。', arrived:'カードが届きました！', adminLink:'主催者のページ'});
+Object.assign(tr, {kadomatsuTitle:'Kadomatsu · Yeni yıl için bambu ve çam süsü', darumaTitle:'Daruma · Yeni yıl dilekleri ve hedefleri için uğur figürü', mochiTitle:'Kagami mochi · Üstünde turunçgil olan geleneksel yeni yıl pirinç kekleri'});
+Object.assign(ja, {kadomatsuTitle:'門松 · 新年を迎える竹と松の飾り', darumaTitle:'だるま · 新年の願いと目標を込める縁起物', mochiTitle:'鏡餅 · だいだいをのせた新年の餅飾り'});
+Object.assign(tr, {postcardTitle:'Yeni yıldan sana bir sır.', postcardHint:'Kartpostalını aç →', stamp:'年賀'});
+Object.assign(ja, {postcardTitle:'新年の、あなただけの秘密。', postcardHint:'年賀状を開く →', stamp:'年賀'});
+Object.assign(tr, {cardPreview:'Kartpostal önizlemesi', cardPreviewNote:'Tasarım örneği · Gerçek eşleşmen çekiliş günü açılacak.', close:'Kapat'});
+Object.assign(ja, {cardPreview:'年賀状のプレビュー', cardPreviewNote:'デザイン例 · 抽選の日に本当の結果が届きます。', close:'閉じる'});
 let current = 'tr';
 try { if (localStorage.getItem('neseli-language') === 'ja') current = 'ja'; } catch {}
 export const locale = () => current === 'ja' ? 'ja-JP' : 'tr-TR';
@@ -37,7 +43,7 @@ function apply() {
  for (const el of document.querySelectorAll('[data-i18n-html]')) el.innerHTML = t(el.dataset.i18nHtml);
  for (const el of document.querySelectorAll('[data-i18n-placeholder]')) el.placeholder = t(el.dataset.i18nPlaceholder);
  for (const el of document.querySelectorAll('.brand > span')) el.textContent = t('brand');
- const stamp = document.querySelector('.postmark'); if(stamp) stamp.textContent = '✳ ' + t('stamp');
+ const stamp = document.querySelector('.postmark'); if(stamp) stamp.textContent = t('stamp');
 }
 function selectLanguage(value) { current = value; try { localStorage.setItem('neseli-language', value); } catch {} apply(); document.getElementById('language-dialog')?.close(); window.dispatchEvent(new Event('app-language')); }
 apply();

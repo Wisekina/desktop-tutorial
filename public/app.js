@@ -92,3 +92,14 @@ refresh().catch(error => { $('message').textContent = error.message; });
 if (!staticPreview) setInterval(() => refresh().catch(() => { $('message').textContent = t('connection'); }), 10000);
 setInterval(countdown, 1000);
 window.addEventListener('app-language', () => refresh().catch(error => { $('message').textContent = error.message; }));
+
+const cardPreview = $('postcard-preview-dialog');
+$('open-card-preview').addEventListener('click', () => {
+  const card = $('reveal').cloneNode(true); card.removeAttribute('id'); card.hidden = false;
+  card.setAttribute('aria-label', t('cardPreview'));
+  card.addEventListener('click', () => { $('sample-card-note').textContent = t('cardPreviewNote'); });
+  $('postcard-preview-content').replaceChildren(card);
+  $('close-card-preview').setAttribute('aria-label', t('close'));
+  cardPreview.showModal();
+});
+$('close-card-preview').addEventListener('click', () => cardPreview.close());
