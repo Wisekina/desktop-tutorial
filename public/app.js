@@ -1,4 +1,5 @@
-import { t, locale, translateError } from './i18n.js?v=card-preview-2';
+import { t, locale, translateError } from './i18n.js?v=fuji-nengajo-3';
+import { ornamentLayout } from './ornaments.js';
 import { staticPreview } from './runtime.js';
 const $ = id => document.getElementById(id);
 let storedToken;
@@ -19,23 +20,19 @@ function drawOrnaments(count) {
   lastCount = count;
   const colors = ['#db7561', '#e5be64', '#bca4c7', '#e9e1c5', '#9fbcad'];
   const group = $('ornaments');
-  // All participants have one ornament. Golden-angle placement fills the tree evenly.
-  for (let i = Math.max(0, previous); i < count; i++) {
-    const fraction = ((i * .61803398875) % 1);
-    const y = 184 + ((i * .38196601125) % 1) * 278;
-    const width = (y - 100) * .37;
-    const x = 250 + (fraction * 2 - 1) * width;
-    const size = count > 120 ? 4 : 8;
+  const positions = ornamentLayout(count);
+  group.replaceChildren();
+  positions.forEach(({x,y,r}, i) => {
     const item = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     item.classList.add('ornament');
-    if (previous < 0) item.style.animation = 'none';
-    for (const [tag, attrs] of [['path', { d: `M${x} ${y-15}v8`, stroke: '#d5b477', 'stroke-width': 1 }], ['circle', { cx: x, cy: y, r: size, fill: colors[i % colors.length] }], ['circle', { cx: x-2, cy: y-2, r: 2, fill: '#ffffff66' }]]) {
+    if (previous < 0 || i < previous) item.classList.add('ornament-settled');
+    for (const [tag, attrs] of [['path', { d: `M${x} ${y-r-4}v4`, stroke: '#d5b477', 'stroke-width': Math.min(1,r/3) }], ['circle', { cx: x, cy: y, r, fill: colors[i % colors.length] }], ['circle', { cx: x-r*.28, cy: y-r*.28, r:r*.23, fill: '#ffffff66' }]]) {
       const element = document.createElementNS('http://www.w3.org/2000/svg', tag);
       for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value);
       item.append(element);
     }
     group.append(item);
-  }
+  });
 }
 function countdown() {
   if (!status?.deadline) return;
