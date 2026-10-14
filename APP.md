@@ -25,3 +25,5 @@ Kişisel bağlantıyı bilen herkes o sonucu açabilir. Organizatör ekranı son
 ## Tasarım önizlemesi
 
 Katılımcıya gönderilen normal bağlantıda kartpostal önizlemesi yoktur. Tasarımı incelemek için ana ekran adresine `?preview=1#kartpostal` ekleyin. Bu yalnızca örnek tasarımı açar; bir yetkilendirme yöntemi değildir ve hiçbir kişisel eşleşmeyi göstermez. Kayıt kapanışında geri gelme hatırlatması ekranda gösterilir; e-posta veya telefon bildirimi gönderilmez.
+
+Normal katılımcı ekranında organizatör bağlantısı gizlidir; tasarım inceleme modunda görünür. Bu görsel ayrım yetkilendirme değildir: `admin.html` statik bir ekran olarak doğrudan açılabilir. Çalışan Node.js sunucusunda ayar değişikliği özel yönetim anahtarıyla korunur; GitHub Pages önizlemesinde tüm yönetim işlemleri kapalıdır.

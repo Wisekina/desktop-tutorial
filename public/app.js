@@ -1,4 +1,4 @@
-import { t, locale, translateError } from './i18n.js?v=headline-7';
+import { t, locale, translateError } from './i18n.js?v=organizer-8';
 import { ornamentLayout } from './ornaments.js';
 import { staticPreview } from './runtime.js';
 const $ = id => document.getElementById(id);
@@ -103,6 +103,7 @@ function openCardPreview() {
   cardPreview.showModal();
 }
 $('open-card-preview').hidden = !previewEnabled;
+$('organizer-link').hidden = !previewEnabled;
 $('open-card-preview').addEventListener('click', openCardPreview);
 $('close-card-preview').addEventListener('click', () => cardPreview.close());
 
