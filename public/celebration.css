@@ -1,0 +1,77 @@
+/* A quiet registration panel beside a playful winter scene. */
+body.celebration{background:#e9efe6;color:#244b3c;background-image:radial-gradient(ellipse at 27% 40%,#fff9e5 0,transparent 43%),radial-gradient(ellipse at 85% 95%,#d6e5d8 0,transparent 60%);min-height:100vh}
+.celebration .topbar{max-width:1280px;padding:25px 40px;border-bottom:0}.celebration .brand{font-size:29px}.celebration .brand span{font-size:19px}.celebration .language-switch{background:#ffffff50;border-color:#c6d3c6}
+.celebration .layout{max-width:1230px;padding:0 30px 10px;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);align-items:center;gap:28px;min-height:calc(100vh - 146px)}
+.celebration .scene{order:0;align-self:center;padding:0;background:radial-gradient(ellipse at 50% 49%,#fff8df80 0,transparent 64%)}.celebration .tree-art{display:block;width:100%;max-height:710px;filter:drop-shadow(0 12px 20px #254a3a0b)}.celebration .intro{order:1;display:block;padding:0 10px 0 0;max-width:430px}
+.celebration h1{font-size:clamp(40px,4.1vw,57px);font-weight:400;letter-spacing:-2px;line-height:1.12;margin:0 0 38px}.celebration h1 em{color:#9f5449}.celebration .facts{gap:18px;margin:0 0 24px;padding:0;border:0}.celebration .facts>div+div{padding-left:18px;border-color:#cbd5c7}.celebration .label{font-size:9px;letter-spacing:1px;color:#69816e}.celebration .facts strong{font-size:17px;margin:9px 0 5px}.celebration .facts small{font-size:10px;color:#6f8473}.celebration .form-card{padding:21px;background:#fffdf3bd;border:1px solid #d3ddcc;border-radius:18px;box-shadow:0 8px 30px #244d3d07}.celebration label{font-size:11px;margin-bottom:10px}.celebration input{background:#fffef8bd;border-color:#d3dbcd;border-radius:9px;padding:14px}.celebration .input-row{flex-direction:row;gap:9px}.celebration .input-row button{border-radius:9px;padding:13px 20px;font-size:12px}.celebration #message:empty{display:none}.celebration #message{font-size:11px;color:#71826d;margin-top:12px}.celebration .preview-banner{background:transparent;border:0;padding:0;margin:18px 0 0;font-size:10px;color:#758b78;max-width:100%}.celebration .tree-caption{margin-top:-3px;gap:6px;font-size:11px;color:#789080;letter-spacing:.2px}.celebration .tree-caption strong{font-size:13px}.celebration footer{border:0;max-width:1170px;justify-content:flex-end;padding:15px 0 20px;margin:0 auto;font-size:10px;color:#79907d}
+.celebration .star{transform-origin:250px 88px;animation:star-glimmer 3s ease-in-out infinite}.celebration .tree-lights{animation:fairy-lights 2.5s ease-in-out infinite;filter:drop-shadow(0 0 5px #ffdb81)}.celebration .doodle{animation:happy-dance 1.8s ease-in-out infinite;transform-origin:center bottom}.celebration .dancer-two{animation-delay:-.9s}.celebration .cute-eyes{transform-box:fill-box;transform-origin:center;animation:blink 5s ease-in-out infinite}.celebration .music-notes{animation:music-float 2.5s ease-in-out infinite}
+.celebration .snowfall{position:fixed;inset:0;z-index:4;pointer-events:none;overflow:hidden}.celebration .snowfall span{display:block;position:absolute;top:-14px;left:var(--x);width:var(--size);height:var(--size);border-radius:50%;background:#fff;box-shadow:0 0 5px #ffffffa0;opacity:.85;animation:winter-snow var(--duration) var(--delay) linear infinite;font-size:0}.celebration .snowfall span:nth-child(3n){opacity:.55;filter:blur(1px)}.celebration .festive-lights{z-index:5}
+.celebration #success h2{font-size:25px;margin:0 0 15px}.celebration #success p{font-size:12px}.celebration .access{font-size:10px;margin-top:20px}.celebration .postcard{margin-bottom:6px}.celebration .language-dialog{background:#fffaf0}
+@keyframes winter-snow{0%{transform:translate3d(0,-15px,0)}100%{transform:translate3d(var(--drift),calc(100vh + 30px),0)}}
+@keyframes happy-dance{0%,100%{transform:rotate(-5deg) translateY(0)}25%{transform:rotate(1deg) translateY(-8px)}50%{transform:rotate(5deg) translateY(0)}75%{transform:rotate(-1deg) translateY(-5px)}}
+@keyframes blink{0%,43%,47%,100%{transform:scaleY(1)}45%{transform:scaleY(.08)}}
+@keyframes fairy-lights{50%{opacity:.7;filter:drop-shadow(0 0 2px #ffdb81)}}
+@keyframes star-glimmer{50%{transform:scale(1.04);filter:drop-shadow(0 0 5px #f7cc71)}}
+@keyframes music-float{50%{transform:translateY(-6px);opacity:.5}}
+html[lang=ja] .celebration h1{font-size:clamp(36px,3.8vw,52px);line-height:1.4}html[lang=ja] .celebration .input-row{flex-direction:row}
+@media(min-width:1500px){.celebration .layout{padding-top:10px}.celebration .tree-art{max-height:760px}}
+@media(max-width:900px){.celebration .layout{gap:12px;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);padding:20px}.celebration .intro{padding:0}.celebration h1{font-size:43px;margin-bottom:27px}.celebration .input-row{flex-direction:column}.celebration .facts strong{font-size:14px}.celebration .topbar{padding:22px 25px}.celebration footer{padding-right:25px}}
+@media(max-width:650px){.celebration .topbar{padding:21px 24px 9px}.celebration .brand span{font-size:17px}.celebration .layout{grid-template-columns:1fr;gap:0;min-height:auto;padding:0 22px 10px}.celebration .scene{grid-row:auto;max-width:430px;width:100%;justify-self:center}.celebration .tree-art{max-height:470px}.celebration .tree-caption{margin:0 0 28px;font-size:10px}.celebration .intro{max-width:430px;width:100%;justify-self:center;text-align:center}.celebration h1{font-size:36px;letter-spacing:-1.4px;line-height:1.12;margin:0 0 24px}.celebration h1 br{display:none}.celebration h1 em{margin-left:6px}.celebration .facts{grid-row:auto;text-align:left;margin-bottom:18px;padding:0 8px;gap:10px}.celebration .facts strong{font-size:15px}.celebration .form-card{grid-row:auto;text-align:left;padding:18px}.celebration .input-row{flex-direction:row}.celebration .preview-banner{margin:13px 0 5px;font-size:9px}.celebration footer{justify-content:center;padding:15px 0 23px;margin:0 22px}.celebration .postcard-title{font-size:20px}html[lang=ja] .celebration h1{font-size:30px;line-height:1.3}html[lang=ja] .celebration .input-row{flex-direction:row}}
+@media(prefers-reduced-motion:reduce){.celebration .snowfall{display:none}.celebration .doodle,.celebration .star,.celebration .tree-lights,.celebration .cute-eyes,.celebration .music-notes{animation:none}}
+
+.celebration .snowfall span:nth-child(1){--x:0%;--delay:-0s;--duration:12s;--size:3px;--drift:-25px}
+.celebration .snowfall span:nth-child(2){--x:37%;--delay:-7s;--duration:14s;--size:4px;--drift:-12px}
+.celebration .snowfall span:nth-child(3){--x:74%;--delay:-14s;--duration:16s;--size:5px;--drift:1px}
+.celebration .snowfall span:nth-child(4){--x:11%;--delay:-21s;--duration:18s;--size:6px;--drift:14px}
+.celebration .snowfall span:nth-child(5){--x:48%;--delay:-5s;--duration:20s;--size:7px;--drift:27px}
+.celebration .snowfall span:nth-child(6){--x:85%;--delay:-12s;--duration:22s;--size:3px;--drift:-25px}
+.celebration .snowfall span:nth-child(7){--x:22%;--delay:-19s;--duration:24s;--size:4px;--drift:-12px}
+.celebration .snowfall span:nth-child(8){--x:59%;--delay:-3s;--duration:12s;--size:5px;--drift:1px}
+.celebration .snowfall span:nth-child(9){--x:96%;--delay:-10s;--duration:14s;--size:6px;--drift:14px}
+.celebration .snowfall span:nth-child(10){--x:33%;--delay:-17s;--duration:16s;--size:7px;--drift:27px}
+.celebration .snowfall span:nth-child(11){--x:70%;--delay:-1s;--duration:18s;--size:3px;--drift:-25px}
+.celebration .snowfall span:nth-child(12){--x:7%;--delay:-8s;--duration:20s;--size:4px;--drift:-12px}
+.celebration .snowfall span:nth-child(13){--x:44%;--delay:-15s;--duration:22s;--size:5px;--drift:1px}
+.celebration .snowfall span:nth-child(14){--x:81%;--delay:-22s;--duration:24s;--size:6px;--drift:14px}
+.celebration .snowfall span:nth-child(15){--x:18%;--delay:-6s;--duration:12s;--size:7px;--drift:27px}
+.celebration .snowfall span:nth-child(16){--x:55%;--delay:-13s;--duration:14s;--size:3px;--drift:-25px}
+.celebration .snowfall span:nth-child(17){--x:92%;--delay:-20s;--duration:16s;--size:4px;--drift:-12px}
+.celebration .snowfall span:nth-child(18){--x:29%;--delay:-4s;--duration:18s;--size:5px;--drift:1px}
+.celebration .snowfall span:nth-child(19){--x:66%;--delay:-11s;--duration:20s;--size:6px;--drift:14px}
+.celebration .snowfall span:nth-child(20){--x:3%;--delay:-18s;--duration:22s;--size:7px;--drift:27px}
+.celebration .snowfall span:nth-child(21){--x:40%;--delay:-2s;--duration:24s;--size:3px;--drift:-25px}
+.celebration .snowfall span:nth-child(22){--x:77%;--delay:-9s;--duration:12s;--size:4px;--drift:-12px}
+.celebration .snowfall span:nth-child(23){--x:14%;--delay:-16s;--duration:14s;--size:5px;--drift:1px}
+.celebration .snowfall span:nth-child(24){--x:51%;--delay:-0s;--duration:16s;--size:6px;--drift:14px}
+.celebration .snowfall span:nth-child(25){--x:88%;--delay:-7s;--duration:18s;--size:7px;--drift:27px}
+.celebration .snowfall span:nth-child(26){--x:25%;--delay:-14s;--duration:20s;--size:3px;--drift:-25px}
+.celebration .snowfall span:nth-child(27){--x:62%;--delay:-21s;--duration:22s;--size:4px;--drift:-12px}
+.celebration .snowfall span:nth-child(28){--x:99%;--delay:-5s;--duration:24s;--size:5px;--drift:1px}
+.celebration .snowfall span:nth-child(29){--x:36%;--delay:-12s;--duration:12s;--size:6px;--drift:14px}
+.celebration .snowfall span:nth-child(30){--x:73%;--delay:-19s;--duration:14s;--size:7px;--drift:27px}
+.celebration .snowfall span:nth-child(31){--x:10%;--delay:-3s;--duration:16s;--size:3px;--drift:-25px}
+.celebration .snowfall span:nth-child(32){--x:47%;--delay:-10s;--duration:18s;--size:4px;--drift:-12px}
+.celebration .snowfall span:nth-child(33){--x:84%;--delay:-17s;--duration:20s;--size:5px;--drift:1px}
+.celebration .snowfall span:nth-child(34){--x:21%;--delay:-1s;--duration:22s;--size:6px;--drift:14px}
+.celebration .snowfall span:nth-child(35){--x:58%;--delay:-8s;--duration:24s;--size:7px;--drift:27px}
+.celebration .snowfall span:nth-child(36){--x:95%;--delay:-15s;--duration:12s;--size:3px;--drift:-25px}
+.celebration .snowfall span:nth-child(37){--x:32%;--delay:-22s;--duration:14s;--size:4px;--drift:-12px}
+.celebration .snowfall span:nth-child(38){--x:69%;--delay:-6s;--duration:16s;--size:5px;--drift:1px}
+.celebration .snowfall span:nth-child(39){--x:6%;--delay:-13s;--duration:18s;--size:6px;--drift:14px}
+.celebration .snowfall span:nth-child(40){--x:43%;--delay:-20s;--duration:20s;--size:7px;--drift:27px}
+.celebration .snowfall span:nth-child(41){--x:80%;--delay:-4s;--duration:22s;--size:3px;--drift:-25px}
+.celebration .snowfall span:nth-child(42){--x:17%;--delay:-11s;--duration:24s;--size:4px;--drift:-12px}
+.celebration .snowfall span:nth-child(43){--x:54%;--delay:-18s;--duration:12s;--size:5px;--drift:1px}
+.celebration .snowfall span:nth-child(44){--x:91%;--delay:-2s;--duration:14s;--size:6px;--drift:14px}
+.celebration .snowfall span:nth-child(45){--x:28%;--delay:-9s;--duration:16s;--size:7px;--drift:27px}
+.celebration .snowfall span:nth-child(46){--x:65%;--delay:-16s;--duration:18s;--size:3px;--drift:-25px}
+.celebration .snowfall span:nth-child(47){--x:2%;--delay:-0s;--duration:20s;--size:4px;--drift:-12px}
+.celebration .snowfall span:nth-child(48){--x:39%;--delay:-7s;--duration:22s;--size:5px;--drift:1px}
+.celebration .snowfall span:nth-child(49){--x:76%;--delay:-14s;--duration:24s;--size:6px;--drift:14px}
+.celebration .snowfall span:nth-child(50){--x:13%;--delay:-21s;--duration:12s;--size:7px;--drift:27px}
+.celebration .snowfall span:nth-child(51){--x:50%;--delay:-5s;--duration:14s;--size:3px;--drift:-25px}
+.celebration .snowfall span:nth-child(52){--x:87%;--delay:-12s;--duration:16s;--size:4px;--drift:-12px}
+.celebration .snowfall span:nth-child(53){--x:24%;--delay:-19s;--duration:18s;--size:5px;--drift:1px}
+.celebration .snowfall span:nth-child(54){--x:61%;--delay:-3s;--duration:20s;--size:6px;--drift:14px}
+.celebration .snowfall span:nth-child(55){--x:98%;--delay:-10s;--duration:22s;--size:7px;--drift:27px}
+.celebration .snowfall span:nth-child(56){--x:35%;--delay:-17s;--duration:24s;--size:3px;--drift:-25px}

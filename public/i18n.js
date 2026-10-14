@@ -24,10 +24,12 @@ Object.assign(ja, { qrEyebrow:'オフィスの新年への招待', qrTitle:'ス�
 Object.assign(errors, { 'Geçerli bir yayın adresi girin.':'有効な公開URLを入力してください。', 'Telefonlardan açılabilen bir HTTPS yayın adresi girin.':'スマートフォンから開けるHTTPSの公開URLを入力してください。', 'Kişisel sonuç bağlantısı yerine uygulamanın ana adresini girin.':'個人の結果リンクではなく、アプリのトップページのURLを入力してください。' });
 Object.assign(tr, {previewBanner:'Arayüz önizlemesi · Ortak kayıt ve çekiliş henüz açılmadı.', previewMessage:'Yılbaşı arayüzü hazır. Gerçek katılımcı kaydı ve özel sonuçlar için veritabanı bağlantısı tamamlanmalı; bu sayfa henüz kayıt almıyor.'});
 Object.assign(ja, {previewBanner:'画面プレビュー · 参加登録と抽選はまだ開始していません。', previewMessage:'新年の画面は準備できました。参加登録と個人の抽選結果にはデータベースの接続が必要です。このページではまだ登録できません。'});
+Object.assign(tr, {hero:'Yeni yılın<br><em>en tatlı sırrı.</em>', budgetLabel:'HEDİYE LİMİTİ', deadlineLabel:'SON KAYIT', namePlaceholder:'Adın ve soyadın', join:'Katıl', peopleSuffix:'süs, bir sürü neşe', unsetBudget:'Belirlenmedi', unsetDeadline:'Yakında', notConfigured:'Kayıtlar yakında açılacak.', previewBanner:'Önizleme · Kayıtlar henüz açık değil.', previewMessage:'', success:'Kayıt başarıyla yapılmıştır.', welcome:'{name}, süsün ağaçta!', waiting:'Çekiliş günü kartpostalın burada.', arrived:'Kartpostalın geldi!', adminLink:'Organizatör köşesi'});
+Object.assign(ja, {hero:'新年の<br><em>小さな秘密。</em>', budgetLabel:'プレゼント上限', deadlineLabel:'登録締め切り', namePlaceholder:'氏名', join:'参加する', peopleSuffix:'個の飾り、たくさんの笑顔', unsetBudget:'未定', unsetDeadline:'近日発表', notConfigured:'登録はまもなく開始します。', previewBanner:'プレビュー · 登録はまだ開始していません。', previewMessage:'', welcome:'{name}さん、飾りがツリーに！', waiting:'抽選の日にカードが届きます。', arrived:'カードが届きました！', adminLink:'主催者のページ'});
 let current = 'tr';
 try { if (localStorage.getItem('neseli-language') === 'ja') current = 'ja'; } catch {}
 export const locale = () => current === 'ja' ? 'ja-JP' : 'tr-TR';
-export const t = (key, params = {}) => { let value = (current === 'ja' ? ja : tr)[key] || key; for (const [name, content] of Object.entries(params)) value = value.replaceAll(`{${name}}`, String(content)); return value; };
+export const t = (key, params = {}) => { let value = (current === 'ja' ? ja : tr)[key] ?? key; for (const [name, content] of Object.entries(params)) value = value.replaceAll(`{${name}}`, String(content)); return value; };
 export const translateError = message => current === 'ja' ? errors[message] || t('generic') : message;
 function apply() {
  document.documentElement.lang = current; document.title = t('title');

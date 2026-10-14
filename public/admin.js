@@ -46,8 +46,8 @@ window.addEventListener('app-language', () => { qrImage.alt = t('qrAlt'); qrMess
 if (staticPreview) {
   for (const control of document.querySelectorAll('form input,form button')) control.disabled = true;
   const explainPreview = () => {
-    document.getElementById('message').textContent = t('previewMessage');
-    qrMessage.textContent = t('previewMessage');
+    document.getElementById('message').textContent = t('previewBanner');
+    qrMessage.textContent = t('previewBanner');
   };
   explainPreview(); window.addEventListener('app-language', explainPreview);
 }
