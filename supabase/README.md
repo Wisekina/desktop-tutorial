@@ -59,3 +59,7 @@ Table Editor varsayılan olarak public şemasını gösterir. Kayıtlar office_p
 ## Gerçek etkinliğe dokunmadan çekilişi dene
 
 Yönetici ekranında Deneme çekilişi bağlantısını açın veya [test-draw.html](../public/test-draw.html) sayfasını kullanın. 25 yapay katılımcı tarayıcı belleğinde eşleştirilir; hiçbir kayıt veya sonuç isteği Supabase'e gönderilmez. Kartpostala tıklayınca örnek katılımcının alıcısı görünür. Bu arayüz denemesidir; gerçek Supabase etkinliğinin tarihini, kayıtlarını veya sabit eşleşmelerini değiştirmez. Yerel PostgreSQL testleri asıl çekiliş fonksiyonunu ayrıca sınar.
+
+## Kapanmış denemeyi yeniden açmak
+
+Mevcut projelerde [05-reopen-draw.sql](05-reopen-draw.sql) dosyasını SQL Editor'da bir kez çalıştır. Kurulum kayıtları ve sonuçları değiştirmez. Organizatör ekranında gelecekte bir tarih seçip **Yeni tarihle kayıtları yeniden aç** düğmesine bas ve uyarıyı onayla. İsimler, kayıt tarihleri ve kişisel bağlantılar korunur; önceki eşleşmeler temizlenir. Yeni kapanışta tekrar çekiliş yapılır. Sonuçları daha önce gören katılımcılara yeniden çekiliş yapılacağını bildir. Normal **Ayarları kaydet** işlemi kapanmış çekilişi değiştirmez.

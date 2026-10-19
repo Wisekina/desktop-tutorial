@@ -1,8 +1,8 @@
-import { t, locale, translateError } from './i18n.js?v=postcard-12';
+import { t, locale, translateError } from './i18n.js?v=reopen-14';
 import { ornamentLayout } from './ornaments.js';
-import { postcardEntrance } from './postcard-motion.js?v=postcard-12';
-import { staticPreview } from './runtime.js?v=postcard-12';
-import { requestApi } from './connection.js?v=postcard-12';
+import { postcardEntrance } from './postcard-motion.js?v=reopen-14';
+import { staticPreview } from './runtime.js?v=reopen-14';
+import { requestApi } from './connection.js?v=reopen-14';
 const $ = id => document.getElementById(id);
 const previewEnabled = new URL(location.href).searchParams.get('preview') === '1';
 const resultDialog = $('draw-postcard-dialog');
@@ -14,7 +14,7 @@ let storedToken;
 try { storedToken = localStorage.getItem('neseli-token'); } catch {}
 let status, token = location.hash.startsWith('#k=') ? location.hash.slice(3) : storedToken;
 if (token) { try { localStorage.setItem('neseli-token', token); } catch {} }
-let ownResult, ownResultCount, ownResultLastChecked = 0, offset = 0, lastCount = -1;
+let ownResult, ownResultCount, ownResultDeadline, ownResultLastChecked = 0, offset = 0, lastCount = -1;
 const api = async (path, body) => {
   try { return await requestApi(path,body); }
   catch (error) { throw new Error(translateError(error.message)); }
@@ -69,8 +69,13 @@ async function refresh() {
   if (token) await loadPersonal();
 }
 async function loadPersonal() {
+  // Reopening a test draw revokes the old result while keeping personal access.
+  if (ownResult && ((!status.drawn && ownResult.recipient) || ownResultDeadline !== status.deadline)) {
+    ownResult = null; entrance.cancel(); postcardPresented = false;
+    $('recipient').textContent = ''; $('gift').hidden = true; $('reveal').hidden = true;
+  }
   if (!ownResult || (ownResultCount !== undefined && status.count < ownResultCount) || Date.now()-ownResultLastChecked >= 60000 || (status.drawn && !ownResult.recipient)) {
-    try { ownResult = await api('result', { token }); ownResultCount = status.count; ownResultLastChecked = Date.now(); }
+    try { ownResult = await api('result', { token }); ownResultCount = status.count; ownResultDeadline = status.deadline; ownResultLastChecked = Date.now(); }
     catch (error) {
       if (error.message !== translateError('Kişisel bağlantı geçersiz.')) throw error;
       try { if (localStorage.getItem('neseli-token') === token) localStorage.removeItem('neseli-token'); } catch {}

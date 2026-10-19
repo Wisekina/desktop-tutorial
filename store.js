@@ -22,6 +22,17 @@ export class DrawStore {
     if (config.drawn || (config.deadline && Date.parse(config.deadline) <= this.clock())) throw new Error('Kapanmış çekilişin ayarları değiştirilemez.');
     this.db.prepare('UPDATE settings SET deadline=?,budget=? WHERE id=1').run(new Date(deadline).toISOString(), budget);
   }
+  reopen(deadline, budget) {
+    if (!Number.isFinite(Date.parse(deadline)) || Date.parse(deadline) <= this.clock()) throw new Error('Gelecekte bir kapanış tarihi seçin.');
+    if (!Number.isSafeInteger(budget) || budget < 1 || budget > 1000000) throw new Error('Bütçe 1 ile 1.000.000 TL arasında olmalı.');
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      this.db.exec('UPDATE people SET recipient=NULL');
+      this.db.prepare('UPDATE settings SET deadline=?,budget=?,drawn=0 WHERE id=1').run(new Date(deadline).toISOString(),budget);
+      this.db.exec('COMMIT');
+    } catch (error) { this.db.exec('ROLLBACK'); throw error; }
+    return this.status();
+  }
   register(name) {
     const config = this.config();
     if (!config.deadline) throw new Error('Organizatör henüz çekiliş tarihini belirlemedi.');

@@ -38,7 +38,8 @@ export async function requestApi(path, body) {
     const calls = {
       status:['gift_status',{}], register:['gift_register',{ p_name:body?.name }], result:['gift_result',{ p_token:body?.token }],
       settings:['gift_configure',{ p_deadline:body?.deadline,p_budget:body?.budget }], 'admin/check':['gift_admin_status',{}],
-      'admin/participants':['gift_admin_participants',{}], 'admin/delete':['gift_delete_registration',{p_id:body?.id}]
+      'admin/participants':['gift_admin_participants',{}], 'admin/delete':['gift_delete_registration',{p_id:body?.id}],
+      'admin/reopen':['gift_reopen',{p_deadline:body?.deadline,p_budget:body?.budget}]
     };
     if (!calls[path]) throw new Error('Desteklenmeyen işlem.');
     const [name, args] = calls[path];

@@ -13,5 +13,7 @@ if [ "$ready" != true ]; then echo 'PostgreSQL did not start'; exit 1; fi
 docker exec -i "$test_container" psql -U postgres -v ON_ERROR_STOP=1 -q < test/supabase-bootstrap.sql
 docker exec -i "$test_container" psql -U postgres -v ON_ERROR_STOP=1 -q < supabase/01-setup.sql
 docker exec -i "$test_container" psql -U postgres -v ON_ERROR_STOP=1 -q < supabase/04-participant-management.sql
+docker exec -i "$test_container" psql -U postgres -v ON_ERROR_STOP=1 -q < supabase/05-reopen-draw.sql
 docker exec -i "$test_container" psql -U postgres -v ON_ERROR_STOP=1 -q < test/supabase-validation.sql
 docker exec -i "$test_container" psql -U postgres -v ON_ERROR_STOP=1 -q < test/supabase-deletion.sql
+docker exec -i "$test_container" psql -U postgres -v ON_ERROR_STOP=1 -q < test/supabase-reopen.sql

@@ -1,6 +1,6 @@
-import { t, translateError } from './i18n.js?v=participants-11';
-import { staticPreview } from './runtime.js?v=participants-11';
-import { requestApi, usesSupabase, loginOrganizer, logoutOrganizer } from './connection.js?v=participants-11';
+import { t, translateError } from './i18n.js?v=reopen-14';
+import { staticPreview } from './runtime.js?v=reopen-14';
+import { requestApi, usesSupabase, loginOrganizer, logoutOrganizer } from './connection.js?v=reopen-14';
 import { registrationUrl } from './qr-url.js';
 import { toDataURL } from './vendor/qrcode.js';
 import { participantWorkbook } from './excel.js';
@@ -9,16 +9,23 @@ let organizerKey = null;
 let organizerLoggedIn = false;
 let participantData = null;
 let qrReady = false;
+let settingsClosed = false;
+let savedDeadline, serverOffset = 0;
 $('supabase-login-fields').hidden = !usesSupabase;
 $('node-login-fields').hidden = usesSupabase;
 $('admin-email').required = usesSupabase;
 $('admin-password').required = usesSupabase;
 $('key').required = !usesSupabase;
 function fillSettings(data) {
+  savedDeadline = data.deadline; serverOffset = data.serverTime - Date.now();
   if (data.deadline) $('deadline').value = new Intl.DateTimeFormat('sv-SE', { timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false }).format(new Date(data.deadline)).replace(' ','T');
   if (data.budget) $('budget').value = data.budget;
-  const closed = !!data.drawn || (!!data.deadline && Date.parse(data.deadline) <= data.serverTime);
-  for (const field of $('settings').querySelectorAll('input,button')) field.disabled = closed;
+  settingsClosed = !!data.drawn || (!!data.deadline && Date.parse(data.deadline) <= data.serverTime);
+  renderSettingsState();
+}
+function renderSettingsState() {
+  $('settings').querySelector('button[type=submit]').textContent = t(settingsClosed ? 'reopenDraw' : 'adminSave');
+  $('reopen-note').hidden = !settingsClosed;
 }
 $('admin-login').addEventListener('submit', async event => {
   event.preventDefault(); const button = event.currentTarget.querySelector('button'); button.disabled = true;
@@ -38,12 +45,19 @@ $('admin-logout').addEventListener('click', () => {
   $('message').textContent = ''; $('login-message').textContent = '';
 });
 $('settings').addEventListener('submit', async event => {
-  event.preventDefault(); const button = event.currentTarget.querySelector('button'); button.disabled = true;
+  event.preventDefault();
+  // The deadline may pass while the organizer keeps this screen open.
+  if (savedDeadline && Date.parse(savedDeadline) <= Date.now()+serverOffset) settingsClosed = true;
+  renderSettingsState();
+  if (settingsClosed && !window.confirm(t('confirmReopen'))) return;
+  const button = event.currentTarget.querySelector('button'); button.disabled = true;
+  const reopening = settingsClosed;
   try {
-    const data = await requestApi('settings', { key:organizerKey,deadline:$('deadline').value+':00+03:00',budget:Number($('budget').value) });
-    fillSettings(data); $('message').textContent = t('settingsSaved');
+    const data = await requestApi(reopening ? 'admin/reopen' : 'settings', { key:organizerKey,deadline:$('deadline').value+':00+03:00',budget:Number($('budget').value) });
+    if (!organizerLoggedIn) return;
+    fillSettings(data); $('message').textContent = t(reopening ? 'drawReopened' : 'settingsSaved');
     await loadParticipants();
-  } catch (error) { $('message').textContent = translateError(error.message); }
+  } catch (error) { $('message').textContent = error.message.includes('gift_reopen') ? t('reopenSetupMissing') : translateError(error.message); }
   finally { button.disabled = false; }
 });
 const rootUrl = new URL('./', location.href);
@@ -66,6 +80,7 @@ function previewExplanation() {
   for (const control of $('admin-login').querySelectorAll('input,button')) control.disabled = true;
 }
 window.addEventListener('app-language', () => {
+  renderSettingsState();
   $('qr-image').alt = t('qrAlt'); $('qr-message').textContent = qrReady ? t('qrReady') : $('qr-url').value ? '' : t('qrNeedsUrl');
   if (participantData) renderParticipants(participantData);
   previewExplanation();

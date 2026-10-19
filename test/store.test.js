@@ -8,6 +8,24 @@ function fixture(t) {
   t.after(() => store.close());
   return { store, deadline: '2026-12-20T15:00:00Z', advance: () => { now = Date.parse('2026-12-20T15:00:00Z'); } };
 }
+test('kapanmış deneme yeniden açılır; isimler ve tokenlar korunur, sonuçlar temizlenir', t => {
+  const {store,deadline,advance}=fixture(t); store.configure(deadline,1000);
+  const tokens=['Ada','Ece','Deniz'].map(name=>store.register(name));
+  advance(); assert.equal(store.status().drawn,true);
+  const original=store.participants().participants;
+  assert.throws(()=>store.reopen(deadline,2000),/Gelecekte/);
+  assert.throws(()=>store.reopen('2027-01-01',0),/Bütçe/);
+  assert.equal(store.status().drawn,true,'Invalid settings must not revoke results');
+  assert.ok(store.result(tokens[0]).recipient);
+  const reopened=store.reopen('2027-01-01T10:00:00Z',2000);
+  assert.equal(reopened.drawn,false); assert.equal(reopened.count,3);
+  assert.deepEqual(store.participants().participants,original);
+  for(const token of tokens) assert.equal(store.result(token).recipient,null);
+  store.register('Yeni kişi');
+  store.clock=()=>Date.parse('2027-01-01T10:00:00Z');
+  assert.equal(store.status().drawn,true);
+  for(const token of tokens) assert.notEqual(store.result(token).name,store.result(token).recipient);
+});
 test('tarih belirlenmeden kayıt kabul edilmez; ayarlar doğrulanır', t => {
   const { store, deadline } = fixture(t);
   assert.throws(() => store.register('Deniz'), /henüz/);

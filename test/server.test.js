@@ -41,6 +41,7 @@ test('HTTP: kalıcı kayıt, özel kartpostal, yönetim yetkisi ve otomatik çek
   assert.equal((await post('settings', { ...config, key: 'test-only-key' })).status, 200);
   assert.equal((await post('admin/participants',{key:'wrong'})).status,403);
   assert.equal((await post('admin/delete',{key:'wrong',id:1})).status,403);
+  assert.equal((await post('admin/reopen',{...config,key:'wrong'})).status,403);
   const a = await post('register', { name: 'Deniz' }); const b = await post('register', { name: 'Ece' });
   const roster=await post('admin/participants',{key:'test-only-key'});
   assert.equal(roster.status,200);assert.equal(roster.data.participants.length,2);assert.ok(!JSON.stringify(roster.data).includes(a.data.token));
@@ -57,4 +58,8 @@ test('HTTP: kalıcı kayıt, özel kartpostal, yönetim yetkisi ve otomatik çek
   assert.equal(status.count, 2); assert.equal(status.drawn, true); assert.ok(!('people' in status));
   await stop(); base = await start();
   assert.deepEqual((await post('result', { token: a.data.token })).data, result);
+  const reopened=await post('admin/reopen',{key:'test-only-key',deadline:new Date(Date.now()+86400000).toISOString(),budget:2000});
+  assert.equal(reopened.status,200);assert.equal(reopened.data.drawn,false);assert.equal(reopened.data.count,2);
+  assert.equal((await post('result',{token:a.data.token})).data.recipient,null);
+  assert.equal((await post('register',{name:'Yeni kişi'})).status,201);
 });

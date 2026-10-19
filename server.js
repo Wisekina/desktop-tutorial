@@ -69,11 +69,12 @@ const server = http.createServer(async (req, res) => {
         if (typeof body.token !== 'string' || body.token.length > 100) return json(400, { error: 'Kişisel bağlantı gerekli.' });
         return json(200, store.result(body.token));
       }
-      if (['/api/settings','/api/admin/check','/api/admin/participants','/api/admin/delete'].includes(url.pathname)) {
+      if (['/api/settings','/api/admin/check','/api/admin/participants','/api/admin/delete','/api/admin/reopen'].includes(url.pathname)) {
         const supplied = Buffer.from(hash(typeof body.key === 'string' ? body.key : ''), 'hex');
         if (!timingSafeEqual(supplied, adminHash)) return json(403, { error: 'Yönetim anahtarı geçersiz.' });
         if (url.pathname === '/api/admin/participants') return json(200,store.participants());
         if (url.pathname === '/api/admin/delete') return json(200,store.deleteRegistration(body.id));
+        if (url.pathname === '/api/admin/reopen') return json(200,store.reopen(body.deadline,body.budget));
         if (url.pathname === '/api/settings') store.configure(body.deadline, body.budget);
         return json(200, store.status());
       }
