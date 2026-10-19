@@ -113,30 +113,50 @@ html[lang=ja] .celebration h1{font-size:clamp(36px,3.8vw,52px);line-height:1.4}h
 .return-reminder>svg{width:17px;height:17px;flex:none;color:#ac8670}
 .celebration .penguin-wave{transform-origin:101px 495px;animation:friendly-wave 4.5s ease-in-out infinite}
 .celebration .snowman-wave{transform-origin:451px 495px;animation:friendly-wave 5.5s 1s ease-in-out infinite}
-.welcome-playing .gift-journey{animation:welcome-copy 650ms 800ms both}
+.welcome-playing.welcome-scene .gift-journey{animation:welcome-copy 900ms 2150ms both}
 @keyframes friendly-wave{0%,15%,45%,100%{transform:rotate(0)}23%,37%{transform:rotate(-19deg)}30%{transform:rotate(6deg)}}
 @keyframes music-meter{from{transform:scaleY(.35)}to{transform:scaleY(1)}}
 @media(max-width:650px){.celebration .header-controls{gap:6px}.celebration .music-toggle{padding:7px 9px;font-size:9px}.celebration .intro h1{margin-bottom:22px}.gift-journey{margin-bottom:21px;gap:8px}.gift-journey li{font-size:10px}.celebration .facts>div,.celebration .facts>div+div{padding:13px}.celebration .facts strong{font-size:15px}.celebration .intro .form-card{padding:19px}.celebration .intro #register-form>label{font-size:17px}.celebration .return-reminder{font-size:10px}.celebration .language-switch{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.celebration .penguin-wave,.celebration .snowman-wave,.music-toggle[aria-pressed=true] .music-bars i{animation:none}}
 
-/* A small New Year opening: star, evergreen, presents, then the invitation. */
-.welcome-playing .arrival-star{transform-box:fill-box;transform-origin:center;animation:welcome-star 900ms cubic-bezier(.22,1,.36,1) both}
-.welcome-playing .arrival-canopy{transform-box:fill-box;transform-origin:center bottom;animation:welcome-tree 1050ms 180ms cubic-bezier(.22,1,.36,1) both}
-.welcome-playing .arrival-ground{animation:welcome-soft 900ms 250ms both}
-.welcome-playing .arrival-trimmings{animation:welcome-soft 700ms 650ms both}
-.welcome-playing .arrival-company{transform-box:fill-box;transform-origin:center bottom;animation:welcome-presents 850ms 650ms cubic-bezier(.22,1,.36,1) both}
-.welcome-playing .tree-caption{animation:welcome-copy 600ms 1000ms both}
-.welcome-playing .intro h1{animation:welcome-copy 750ms 700ms cubic-bezier(.22,1,.36,1) both}
-.welcome-playing .intro .facts{animation:welcome-copy 700ms 900ms both}
-.welcome-playing .intro .form-card{animation:welcome-copy 650ms 1100ms both}
-.welcome-playing .scene::after{content:'';position:absolute;inset:10% 2% 4%;pointer-events:none;background:radial-gradient(circle at 17% 35%,#eacb81 0 2px,transparent 3px),radial-gradient(circle at 86% 29%,#eacb81 0 2px,transparent 3px),radial-gradient(circle at 10% 65%,#fff7da 0 3px,transparent 4px),radial-gradient(circle at 91% 70%,#fff7da 0 3px,transparent 4px);animation:welcome-sparkles 1600ms 150ms both}
+/* Give the opening wish time to breathe before the scene comes to life. */
+.welcome-prologue{position:fixed;inset:0;z-index:7;display:flex;align-items:center;justify-content:center;padding:100px 28px 120px;background:radial-gradient(ellipse at 50% 43%,#fff9e9 0,#edf1e7 58%,#e1eadf 100%);text-align:center;color:#345744}
+.welcome-prologue[hidden]{display:none}
+.prologue-copy{max-width:780px;animation:prologue-arrive 1100ms cubic-bezier(.22,1,.36,1) both}
+.prologue-spark{width:48px;height:48px;margin-bottom:24px}
+.welcome-prologue h2{font-family:Georgia,serif;font-size:clamp(32px,4.5vw,56px);font-weight:400;letter-spacing:-1.5px;line-height:1.25;margin:0}
+.welcome-prologue h2 em{color:#a25e50;font-weight:400}
+.prologue-rule{display:block;width:36px;height:1px;margin:27px auto 22px;background:#cbb68d}
+.welcome-prologue p{font-size:13px;line-height:1.8;letter-spacing:.2px;color:#7c8b72;margin:0}
+.welcome-prologue #skip-welcome{position:absolute;bottom:50px;left:50%;transform:translateX(-50%);background:transparent;color:#87937b;font-size:10px;letter-spacing:.4px;border-radius:24px;padding:12px 18px}
+.welcome-prologue #skip-welcome:hover{background:#ffffff80;color:#49634e}
+.welcome-prologue.prologue-leaving{animation:prologue-depart 900ms ease both;pointer-events:none}
+.prologue-playing .layout{opacity:0;pointer-events:none}
+.welcome-playing .topbar{position:relative;z-index:9}
+.welcome-playing .snowfall{z-index:8}
+.welcome-playing main:focus{outline:none}
+@keyframes prologue-arrive{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
+@keyframes prologue-depart{from{opacity:1}to{opacity:0}}
+@media(max-width:650px){.welcome-prologue{padding:95px 22px 120px}.welcome-prologue h2{font-size:32px;letter-spacing:-.8px}.welcome-prologue p{font-size:12px;max-width:260px;margin:auto}.prologue-spark{width:40px;height:40px;margin-bottom:22px}.welcome-prologue #skip-welcome{bottom:35px}html[lang=ja] .welcome-prologue h2{font-size:27px;line-height:1.6;letter-spacing:0}}
+
+/* Star and evergreen first. Presents arrive after the tree has settled. */
+.welcome-playing.welcome-scene .arrival-star{transform-box:fill-box;transform-origin:center;animation:welcome-star 1300ms cubic-bezier(.22,1,.36,1) both}
+.welcome-playing.welcome-scene .arrival-canopy{transform-box:fill-box;transform-origin:center bottom;animation:welcome-tree 1500ms 250ms cubic-bezier(.22,1,.36,1) both}
+.welcome-playing.welcome-scene .arrival-ground{animation:welcome-soft 1300ms 350ms both}
+.welcome-playing.welcome-scene .arrival-trimmings{animation:welcome-soft 1000ms 1100ms both}
+.welcome-playing.welcome-scene .arrival-company{transform-box:fill-box;transform-origin:center bottom;animation:welcome-presents 1200ms 1750ms cubic-bezier(.22,1,.36,1) both}
+.welcome-playing.welcome-scene .tree-caption{animation:welcome-copy 900ms 2400ms both}
+.welcome-playing.welcome-scene .intro h1{animation:welcome-copy 1000ms 1950ms cubic-bezier(.22,1,.36,1) both}
+.welcome-playing.welcome-scene .intro .facts{animation:welcome-copy 950ms 2350ms both}
+.welcome-playing.welcome-scene .intro .form-card{animation:welcome-copy 950ms 2550ms both}
+.welcome-playing.welcome-scene .scene::after{content:'';position:absolute;inset:10% 2% 4%;pointer-events:none;background:radial-gradient(circle at 17% 35%,#eacb81 0 2px,transparent 3px),radial-gradient(circle at 86% 29%,#eacb81 0 2px,transparent 3px),radial-gradient(circle at 10% 65%,#fff7da 0 3px,transparent 4px),radial-gradient(circle at 91% 70%,#fff7da 0 3px,transparent 4px);animation:welcome-sparkles 2400ms 400ms both}
 @keyframes welcome-star{0%{opacity:0;transform:translateY(-18px) scale(.4) rotate(-24deg);filter:drop-shadow(0 0 22px #ffe9aa)}55%{opacity:1;transform:scale(1.14) rotate(9deg);filter:drop-shadow(0 0 16px #f7cc71)}78%{transform:scale(.97) rotate(-4deg)}100%{opacity:1;transform:scale(1) rotate(0);filter:drop-shadow(0 0 3px #f7cc71)}}
 @keyframes welcome-tree{from{opacity:0;transform:translateY(18px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes welcome-presents{0%{opacity:0;transform:translateY(22px) scale(.93)}65%{opacity:1;transform:translateY(-4px) scale(1.01)}100%{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes welcome-soft{from{opacity:0}to{opacity:1}}
 @keyframes welcome-copy{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes welcome-sparkles{0%,100%{opacity:0;transform:translateY(10px) scale(.95)}45%{opacity:.9}75%{opacity:.4;transform:translateY(-18px) scale(1.04)}}
-@media(prefers-reduced-motion:reduce){.welcome-playing .scene::after{display:none}}
+@media(prefers-reduced-motion:reduce){.welcome-playing.welcome-scene .scene::after{display:none}}
 
 /* First enjoy the full tree; then the nengajo arrives in the foreground. */
 .celebration .scene{transition:filter .7s ease,transform .7s ease}
