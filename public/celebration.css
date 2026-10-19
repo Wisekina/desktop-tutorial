@@ -122,6 +122,21 @@ html[lang=ja] .celebration h1{font-size:clamp(36px,3.8vw,52px);line-height:1.4}h
 /* Give the opening wish time to breathe before the scene comes to life. */
 .welcome-prologue{position:fixed;inset:0;z-index:7;display:flex;align-items:center;justify-content:center;padding:100px 28px 120px;background:radial-gradient(ellipse at 50% 43%,#fff9e9 0,#edf1e7 58%,#e1eadf 100%);text-align:center;color:#345744}
 .welcome-prologue[hidden]{display:none}
+.welcome-guide{overflow-y:auto;align-items:flex-start;padding:100px 24px 40px}
+.guide-card{width:100%;max-width:510px;margin:auto;text-align:left}
+.guide-gift{display:grid;place-items:center;width:56px;height:56px;margin:0 0 20px;border-radius:18px;background:#f5e8dc;color:#a56854}
+.guide-gift svg{width:35px;height:35px}
+.welcome-prologue.welcome-guide h2{font-size:38px;line-height:1.15;letter-spacing:-1px;max-width:470px;outline:none}
+.welcome-guide .guide-lead{font-size:16px;line-height:1.7;color:#5d715c;margin:17px 0 25px;letter-spacing:0}
+.guide-steps{list-style:none;padding:0;margin:0;display:grid;gap:21px}
+.guide-steps li{display:flex;align-items:flex-start;gap:15px}
+.guide-steps li>span{display:grid;place-items:center;flex:none;width:30px;height:30px;background:#e1e8d9;border:1px solid #d2ddc8;border-radius:50%;font-size:13px;color:#57744e}
+.guide-steps strong{display:block;font-size:17px;font-weight:500;line-height:1.5;color:#345744}
+.welcome-guide .guide-steps p{margin:3px 0 0;font-size:15px;line-height:1.6;letter-spacing:0;color:#64735f}
+.welcome-guide .guide-private{margin:24px 0 18px;padding-top:17px;border-top:1px solid #d6ddca;font-size:13px;color:#6e7c65;letter-spacing:0}
+.welcome-guide #continue-guide{width:100%;min-height:49px;font-size:16px;border-radius:12px;background:#315b46;color:#fffaf0}
+.welcome-guide #continue-guide:hover{background:#244b38}
+@media(max-width:650px){.welcome-prologue.welcome-guide{padding:92px 26px 30px}.welcome-prologue.welcome-guide h2{font-size:32px}.welcome-guide .guide-lead{font-size:15px;max-width:none;margin:15px 0 23px}.welcome-guide .guide-steps p{font-size:14px;max-width:none;margin:3px 0 0}.guide-steps{gap:19px}.guide-steps li{gap:12px}.guide-steps strong{font-size:16px}.welcome-guide .guide-private{max-width:none;margin:21px 0 17px;font-size:13px}.guide-gift{width:48px;height:48px;margin-bottom:17px}html[lang=ja] .welcome-prologue.welcome-guide h2{font-size:29px;line-height:1.4}}
 .prologue-copy{max-width:780px;animation:prologue-arrive 1100ms cubic-bezier(.22,1,.36,1) both}
 .prologue-spark{width:48px;height:48px;margin-bottom:24px}
 .welcome-prologue h2{font-family:Georgia,serif;font-size:clamp(32px,4.5vw,56px);font-weight:400;letter-spacing:-1.5px;line-height:1.25;margin:0}

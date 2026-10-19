@@ -3,14 +3,17 @@ export function welcomeEntrance() {
   const language = document.getElementById('language-dialog');
   const prologue = document.getElementById('welcome-prologue');
   const main = document.querySelector('main');
+  const guide = document.getElementById('welcome-guide');
+  const footer = document.querySelector('footer');
   if (!prologue || !main) return;
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
-  let started = false, stage = 'idle', timers = [];
+  let started = false, stage = 'idle', timers = [], guideReturnsToMain = false;
   const later = (fn, delay) => timers.push(setTimeout(fn,delay));
   function clearTimers() { timers.forEach(clearTimeout); timers = []; }
   function finish() {
     clearTimers(); stage = 'finished';
-    prologue.hidden = true; main.inert = false;
+    prologue.hidden = true; if (guide) guide.hidden = true;
+    main.inert = false; if (footer) footer.inert = false;
     document.body.classList.remove('welcome-playing','prologue-playing','welcome-scene');
     window.dispatchEvent(new Event('welcome-finished'));
   }
@@ -18,7 +21,7 @@ export function welcomeEntrance() {
     if (stage !== 'prologue') return;
     if (motion.matches) { finish(); return; }
     clearTimers(); stage = 'scene';
-    prologue.hidden = true; main.inert = false;
+    prologue.hidden = true; main.inert = false; if (footer) footer.inert = false;
     document.body.classList.remove('prologue-playing');
     document.body.classList.add('welcome-scene');
     later(finish,3600);
@@ -26,10 +29,26 @@ export function welcomeEntrance() {
   function start() {
     if (started || language?.open || document.hidden) return;
     started = true;
-    prologue.classList.remove('prologue-leaving');
-    stage = 'prologue'; prologue.hidden = false; main.inert = true;
+    let understood = false;
+    try { understood = localStorage.getItem('neseli-guide-seen') === '1'; } catch {}
+    if (guide && !understood) showGuide(false);
+    else showWish();
+  }
+  function prepareOverlay() {
+    clearTimers(); main.inert = true; if (footer) footer.inert = true;
     window.scrollTo({top:0,behavior:'instant'});
+    document.body.classList.remove('welcome-scene');
     document.body.classList.add('welcome-playing','prologue-playing');
+  }
+  function showGuide(returnToMain) {
+    prepareOverlay(); stage = 'guide'; guideReturnsToMain = returnToMain;
+    prologue.hidden = true; guide.hidden = false;
+    guide.querySelector('h2').focus({preventScroll:true});
+  }
+  function showWish() {
+    prepareOverlay(); if (guide) guide.hidden = true;
+    prologue.classList.remove('prologue-leaving');
+    stage = 'prologue'; prologue.hidden = false;
     schedulePrologue();
   }
   function schedulePrologue() {
@@ -41,6 +60,15 @@ export function welcomeEntrance() {
     showScene(); main.focus({preventScroll:true});
   });
   language?.addEventListener('close', start);
+  document.getElementById('continue-guide')?.addEventListener('click',() => {
+    if (stage !== 'guide') return;
+    try { localStorage.setItem('neseli-guide-seen','1'); } catch {}
+    if (guideReturnsToMain) { finish(); main.focus({preventScroll:true}); }
+    else showWish();
+  });
+  document.getElementById('open-guide')?.addEventListener('click',() => {
+    if (stage === 'finished' && guide) showGuide(true);
+  });
   // The wish remains readable when motion is reduced or the tab was in back.
   motion.addEventListener('change', () => { if (motion.matches && stage === 'scene') finish(); });
   document.addEventListener('visibilitychange',() => {
@@ -51,7 +79,7 @@ export function welcomeEntrance() {
   });
   document.getElementById('replay-welcome')?.addEventListener('click',() => {
     if (stage !== 'finished') return;
-    started = false; start();
+    showWish();
   });
   start();
 }
