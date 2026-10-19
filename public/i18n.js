@@ -46,6 +46,8 @@ Object.assign(tr, {openPostcard:'Kartpostalını aç →'});
 Object.assign(ja, {openPostcard:'年賀状を開く →'});
 Object.assign(tr, {adminNote:'En az iki katılımcı gerekir. Kapanmış bir denemeyi yeni tarihle yeniden açabilirsin. Bu ekran eşleşmeleri göstermez.', reopenDraw:'Yeni tarihle kayıtları yeniden aç →', reopenNote:'İsimler ve kişisel erişimler korunur. Önceki eşleşmeler temizlenir; yeni tarihte tekrar çekiliş yapılır.', confirmReopen:'Kayıtlar yeniden açılacak ve mevcut eşleşmeler temizlenecek. Daha önce sonuç görenlere yeni çekiliş yapılacağını haber vermelisin. İsimler ve kişisel bağlantılar korunacak. Devam edilsin mi?', drawReopened:'Kayıtlar yeniden açıldı. Çekiliş yeni tarihte yapılacak.', reopenSetupMissing:'Supabase SQL Editor’da 05-reopen-draw.sql dosyasını bir kez çalıştır, ardından tekrar dene.'});
 Object.assign(ja, {adminNote:'2人以上の参加者が必要です。終了したテスト抽選は、新しい日時で受付を再開できます。この画面に抽選結果は表示されません。', reopenDraw:'新しい日時で受付を再開 →', reopenNote:'参加者名と専用リンクは維持されます。以前の組み合わせは取り消され、新しい締め切りに再抽選されます。', confirmReopen:'受付を再開し、以前の組み合わせを取り消します。結果を見た参加者には再抽選することを伝えてください。参加者名と専用リンクは維持されます。続けますか？', drawReopened:'受付を再開しました。新しい締め切りに再抽選します。', reopenSetupMissing:'Supabase SQL Editorで05-reopen-draw.sqlを一度実行してから、再度お試しください。'});
+Object.assign(tr, {journeyLabel:'Nasıl katılırım?', journeyJoin:'Adını yaz', journeyTree:'Süsün eklensin', journeyCard:'Kartpostalını aç', joinLabel:'Ağaçta sana da yer var.', deadlineLabel:'KAYIT / ÇEKİLİŞ', returnReminder:'Çekiliş günü yine gel, kartpostalını aç.', returnReminderDate:'O gün yine gel, kartpostalını aç.', waitingDate:'Kartpostalın {date} tarihinde burada. Aynı tarayıcıdan tekrar gel.', musicLabel:'Müzik', musicOn:'Yılbaşı müziğini aç', musicOff:'Yılbaşı müziğini kapat', musicUnavailable:'Ses açılamadı', daysLeft:'{d} gün · {h} saat kaldı', hoursLeft:'{h} saat · {m} dk kaldı', minutesLeft:'{m} dakika kaldı', secondsLeft:'Son {s} saniye'});
+Object.assign(ja, {journeyLabel:'参加の流れ', journeyJoin:'名前を登録', journeyTree:'飾りがひとつ', journeyCard:'年賀状を開く', joinLabel:'ツリーに、あなたの飾りも。', deadlineLabel:'登録締切・抽選', returnReminder:'抽選の日に戻って、年賀状を開こう。', returnReminderDate:'その日にまた来て、年賀状を開こう。', waitingDate:'{date}（トルコ時間）に年賀状が届きます。同じブラウザで戻ってね。', musicLabel:'音楽', musicOn:'新年の音楽をオン', musicOff:'新年の音楽をオフ', musicUnavailable:'音声を再生できません', daysLeft:'あと{d}日 {h}時間', hoursLeft:'あと{h}時間 {m}分', minutesLeft:'あと{m}分', secondsLeft:'あと{s}秒'});
 let current = 'tr';
 try { if (localStorage.getItem('neseli-language') === 'ja') current = 'ja'; } catch {}
 export const locale = () => current === 'ja' ? 'ja-JP' : 'tr-TR';
@@ -56,6 +58,7 @@ function apply() {
  for (const el of document.querySelectorAll('[data-i18n]')) el.textContent = t(el.dataset.i18n);
  for (const el of document.querySelectorAll('[data-i18n-html]')) el.innerHTML = t(el.dataset.i18nHtml);
  for (const el of document.querySelectorAll('[data-i18n-placeholder]')) el.placeholder = t(el.dataset.i18nPlaceholder);
+ for (const el of document.querySelectorAll('[data-i18n-label]')) el.setAttribute('aria-label',t(el.dataset.i18nLabel));
  for (const el of document.querySelectorAll('.brand > span')) el.textContent = t('brand');
  const stamp = document.querySelector('.postmark'); if(stamp) stamp.textContent = t('stamp');
 }

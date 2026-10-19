@@ -1,11 +1,13 @@
-import { t, locale, translateError } from './i18n.js?v=welcome-15';
+import { t, locale, translateError } from './i18n.js?v=cozy-16';
 import { ornamentLayout } from './ornaments.js';
-import { welcomeEntrance } from './welcome.js?v=welcome-15';
-import { postcardEntrance } from './postcard-motion.js?v=welcome-15';
-import { staticPreview } from './runtime.js?v=welcome-15';
-import { requestApi } from './connection.js?v=welcome-15';
+import { welcomeEntrance } from './welcome.js?v=cozy-16';
+import { setupMusic } from './music.js?v=cozy-16';
+import { postcardEntrance } from './postcard-motion.js?v=cozy-16';
+import { staticPreview } from './runtime.js?v=cozy-16';
+import { requestApi } from './connection.js?v=cozy-16';
 const $ = id => document.getElementById(id);
 welcomeEntrance();
+setupMusic({ button:$('music-toggle'),label:$('music-label'),t });
 const previewEnabled = new URL(location.href).searchParams.get('preview') === '1';
 const resultDialog = $('draw-postcard-dialog');
 const entrance = postcardEntrance(resultDialog, document.querySelector('.scene'));
@@ -45,7 +47,7 @@ function drawOrnaments(count) {
 function countdown() {
   if (!status?.deadline) return;
   const seconds = Math.max(0, Math.floor((Date.parse(status.deadline) - Date.now() - offset) / 1000));
-  $('countdown').textContent = seconds ? t('countdown', { d:Math.floor(seconds / 86400), h:Math.floor(seconds / 3600) % 24, m:Math.floor(seconds / 60) % 60, s:seconds % 60 }) : t('closedCountdown');
+  $('countdown').textContent = seconds ? t(seconds>=86400 ? 'daysLeft' : seconds>=3600 ? 'hoursLeft' : seconds>=60 ? 'minutesLeft' : 'secondsLeft', { d:Math.floor(seconds / 86400), h:Math.floor(seconds / 3600) % 24, m:Math.floor(seconds / 60) % 60, s:seconds % 60 }) : t('closedCountdown');
   $('join').disabled = !seconds;
 }
 async function refresh() {
