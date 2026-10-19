@@ -1,10 +1,10 @@
-import { t, locale, translateError } from './i18n.js?v=guide-21';
+import { t, locale, translateError } from './i18n.js?v=ja-22';
 import { ornamentLayout } from './ornaments.js';
-import { welcomeEntrance } from './welcome.js?v=guide-21';
-import { setupMusic } from './music.js?v=guide-21';
-import { postcardEntrance } from './postcard-motion.js?v=guide-21';
-import { staticPreview } from './runtime.js?v=guide-21';
-import { requestApi } from './connection.js?v=guide-21';
+import { welcomeEntrance } from './welcome.js?v=ja-22';
+import { setupMusic } from './music.js?v=ja-22';
+import { postcardEntrance } from './postcard-motion.js?v=ja-22';
+import { staticPreview } from './runtime.js?v=ja-22';
+import { requestApi } from './connection.js?v=ja-22';
 const $ = id => document.getElementById(id);
 welcomeEntrance();
 setupMusic({ button:$('music-toggle'),label:$('music-label'),t });
