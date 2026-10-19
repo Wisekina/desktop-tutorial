@@ -1,10 +1,10 @@
-import { t, locale, translateError } from './i18n.js?v=wish-18';
+import { t, locale, translateError } from './i18n.js?v=autoplay-19';
 import { ornamentLayout } from './ornaments.js';
-import { welcomeEntrance } from './welcome.js?v=wish-18';
-import { setupMusic } from './music.js?v=wish-18';
-import { postcardEntrance } from './postcard-motion.js?v=wish-18';
-import { staticPreview } from './runtime.js?v=wish-18';
-import { requestApi } from './connection.js?v=wish-18';
+import { welcomeEntrance } from './welcome.js?v=autoplay-19';
+import { setupMusic } from './music.js?v=autoplay-19';
+import { postcardEntrance } from './postcard-motion.js?v=autoplay-19';
+import { staticPreview } from './runtime.js?v=autoplay-19';
+import { requestApi } from './connection.js?v=autoplay-19';
 const $ = id => document.getElementById(id);
 welcomeEntrance();
 setupMusic({ button:$('music-toggle'),label:$('music-label'),t });

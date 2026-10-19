@@ -1,14 +1,15 @@
 // An original, quiet music-box waltz. Synthesized locally; no audio downloads.
 export function setupMusic({ button, label, t }) {
-  let context, master, timer, step = 0, next = 0, wanted = false, busy = false;
+  let context, master, timer, step = 0, next = 0, wanted = true, busy = false, mutedByUser = false;
   const melody = [76,null,79,78,76,74, 72,null,76,74,72,69, 71,null,74,76,74,71, 69,null,72,74,72,null,
     76,79,83,null,81,79, 78,null,76,74,76,72, 74,76,79,78,74,71, 72,null,76,74,72,null];
   const chords = [[60,64,67],[57,60,64],[55,59,62],[53,57,60],[60,64,67],[57,60,64],[55,59,62],[60,64,67]];
   const duration = 60 / 94 / 2;
   function render() {
-    button.setAttribute('aria-pressed', String(wanted));
-    button.setAttribute('aria-label', t(wanted ? 'musicOff' : 'musicOn'));
-    button.title = t(wanted ? 'musicOff' : 'musicOn');
+    const playing = wanted && context?.state === 'running';
+    button.setAttribute('aria-pressed', String(playing));
+    button.setAttribute('aria-label', t(playing ? 'musicOff' : 'musicOn'));
+    button.title = t(playing ? 'musicOff' : 'musicOn');
     label.textContent = t('musicLabel');
   }
   function note(midi, when, length, volume, bell = false) {
@@ -40,21 +41,58 @@ export function setupMusic({ button, label, t }) {
     }
   }
   async function stop() {
-    wanted = false; clearInterval(timer); render();
+    wanted = false; clearInterval(timer); timer = undefined;
     const previous = context; context = null;
+    render();
     if (previous && previous.state !== 'closed') await previous.close();
   }
+  function syncPlayback(current) {
+    if (context !== current) return;
+    if (wanted && current.state === 'running' && !document.hidden) {
+      if (timer === undefined) {
+        next = current.currentTime+.06;
+        schedule(); timer = setInterval(schedule,100);
+      }
+    } else { clearInterval(timer); timer = undefined; }
+    render();
+  }
+  function failed(manual) {
+    // A blocked automatic start is normal: a later trusted gesture retries it.
+    if (!manual) return;
+    stop().catch(() => {}).then(() => {
+      button.title = t('musicUnavailable'); label.textContent = t('musicUnavailable');
+    });
+  }
+  function start(manual = false) {
+    if (!wanted || document.hidden) return;
+    try {
+      if (!context) {
+        const Audio = window.AudioContext || window.webkitAudioContext;
+        if (!Audio) throw new Error('Audio unavailable');
+        context = new Audio(); master = context.createGain(); master.gain.value = .16; master.connect(context.destination);
+        const current = context;
+        current.addEventListener('statechange',() => syncPlayback(current));
+        step = 0;
+      }
+      const current = context;
+      // Do not await here: some browsers leave resume pending until a gesture.
+      current.resume().then(() => syncPlayback(current)).catch(() => { if (context === current) failed(manual); });
+      syncPlayback(current);
+    } catch { failed(manual); }
+  }
+  function firstGesture(event) {
+    if (event.target.closest?.('#music-toggle') || !wanted || context?.state === 'running') return;
+    start();
+  }
+  document.addEventListener('click',firstGesture,{capture:true});
+  document.addEventListener('keydown',firstGesture,{capture:true});
   button.addEventListener('click', async () => {
     if (busy) return;
     busy = true;
     try {
-      if (wanted) await stop();
+      if (wanted && context?.state === 'running') { mutedByUser = true; await stop(); }
       else {
-        const Audio = window.AudioContext || window.webkitAudioContext;
-        if (!Audio) throw new Error('Audio unavailable');
-        context = new Audio(); master = context.createGain(); master.gain.value = .16; master.connect(context.destination);
-        await context.resume(); wanted = true; step = 0; next = context.currentTime+.06;
-        render(); schedule(); timer = setInterval(schedule,100);
+        mutedByUser = false; wanted = true; start(true);
       }
     } catch {
       await stop().catch(() => {});
@@ -63,13 +101,14 @@ export function setupMusic({ button, label, t }) {
     } finally { busy = false; }
   });
   document.addEventListener('visibilitychange', async () => {
-    if (!wanted || !context || busy) return;
+    if (!wanted || busy) return;
     try {
-      if (document.hidden) await context.suspend();
-      else { await context.resume(); next = context.currentTime+.06; schedule(); }
+      if (document.hidden) await context?.suspend();
+      else start();
     } catch { await stop().catch(() => {}); }
   });
   window.addEventListener('app-language',render);
   window.addEventListener('pagehide',() => { stop().catch(() => {}); });
-  render();
+  window.addEventListener('pageshow',event => { if (event.persisted && !mutedByUser) { wanted = true; start(); } });
+  render(); start();
 }
