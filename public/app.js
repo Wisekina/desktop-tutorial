@@ -1,9 +1,11 @@
-import { t, locale, translateError } from './i18n.js?v=reopen-14';
+import { t, locale, translateError } from './i18n.js?v=welcome-15';
 import { ornamentLayout } from './ornaments.js';
-import { postcardEntrance } from './postcard-motion.js?v=reopen-14';
-import { staticPreview } from './runtime.js?v=reopen-14';
-import { requestApi } from './connection.js?v=reopen-14';
+import { welcomeEntrance } from './welcome.js?v=welcome-15';
+import { postcardEntrance } from './postcard-motion.js?v=welcome-15';
+import { staticPreview } from './runtime.js?v=welcome-15';
+import { requestApi } from './connection.js?v=welcome-15';
 const $ = id => document.getElementById(id);
+welcomeEntrance();
 const previewEnabled = new URL(location.href).searchParams.get('preview') === '1';
 const resultDialog = $('draw-postcard-dialog');
 const entrance = postcardEntrance(resultDialog, document.querySelector('.scene'));

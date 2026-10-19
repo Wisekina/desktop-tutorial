@@ -88,6 +88,25 @@ html[lang=ja] .celebration h1{font-size:clamp(36px,3.8vw,52px);line-height:1.4}h
 
 .celebration .ornament-settled{animation:none}
 
+/* A small New Year opening: star, evergreen, presents, then the invitation. */
+.welcome-playing .arrival-star{transform-box:fill-box;transform-origin:center;animation:welcome-star 900ms cubic-bezier(.22,1,.36,1) both}
+.welcome-playing .arrival-canopy{transform-box:fill-box;transform-origin:center bottom;animation:welcome-tree 1050ms 180ms cubic-bezier(.22,1,.36,1) both}
+.welcome-playing .arrival-ground{animation:welcome-soft 900ms 250ms both}
+.welcome-playing .arrival-trimmings{animation:welcome-soft 700ms 650ms both}
+.welcome-playing .arrival-company{transform-box:fill-box;transform-origin:center bottom;animation:welcome-presents 850ms 650ms cubic-bezier(.22,1,.36,1) both}
+.welcome-playing .tree-caption{animation:welcome-copy 600ms 1000ms both}
+.welcome-playing .intro h1{animation:welcome-copy 750ms 700ms cubic-bezier(.22,1,.36,1) both}
+.welcome-playing .intro .facts{animation:welcome-copy 700ms 900ms both}
+.welcome-playing .intro .form-card{animation:welcome-copy 650ms 1100ms both}
+.welcome-playing .scene::after{content:'';position:absolute;inset:10% 2% 4%;pointer-events:none;background:radial-gradient(circle at 17% 35%,#eacb81 0 2px,transparent 3px),radial-gradient(circle at 86% 29%,#eacb81 0 2px,transparent 3px),radial-gradient(circle at 10% 65%,#fff7da 0 3px,transparent 4px),radial-gradient(circle at 91% 70%,#fff7da 0 3px,transparent 4px);animation:welcome-sparkles 1600ms 150ms both}
+@keyframes welcome-star{0%{opacity:0;transform:translateY(-18px) scale(.4);filter:drop-shadow(0 0 22px #ffe9aa)}55%{opacity:1;transform:scale(1.14);filter:drop-shadow(0 0 16px #f7cc71)}100%{opacity:1;transform:scale(1);filter:drop-shadow(0 0 3px #f7cc71)}}
+@keyframes welcome-tree{from{opacity:0;transform:translateY(18px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes welcome-presents{0%{opacity:0;transform:translateY(22px) scale(.93)}65%{opacity:1;transform:translateY(-4px) scale(1.01)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes welcome-soft{from{opacity:0}to{opacity:1}}
+@keyframes welcome-copy{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes welcome-sparkles{0%,100%{opacity:0;transform:translateY(10px) scale(.95)}45%{opacity:.9}75%{opacity:.4;transform:translateY(-18px) scale(1.04)}}
+@media(prefers-reduced-motion:reduce){.welcome-playing .scene::after{display:none}}
+
 /* First enjoy the full tree; then the nengajo arrives in the foreground. */
 .celebration .scene{transition:filter .7s ease,transform .7s ease}
 .celebration.tree-moment .scene{filter:drop-shadow(0 0 24px #dfc78070);transform:scale(1.025)}
