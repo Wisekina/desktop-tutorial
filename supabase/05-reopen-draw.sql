@@ -12,7 +12,7 @@ begin
   if p_budget is null or p_budget not between 1 and 1000000 then
     raise exception 'Bütçe 1 ile 1.000.000 TL arasında olmalı.';
   end if;
-  update office_private.participants set recipient=null;
+  update office_private.participants set recipient=null where recipient is not null;
   update office_private.event set deadline=p_deadline,budget=p_budget,drawn=false where id=1;
   return public.gift_status();
 end $$;
