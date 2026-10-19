@@ -16,6 +16,7 @@ export function welcomeEntrance() {
   }
   function showScene() {
     if (stage !== 'prologue') return;
+    if (motion.matches) { finish(); return; }
     clearTimers(); stage = 'scene';
     prologue.hidden = true; main.inert = false;
     document.body.classList.remove('prologue-playing');
@@ -23,18 +24,34 @@ export function welcomeEntrance() {
     later(finish,3600);
   }
   function start() {
-    if (started || language?.open) return;
+    if (started || language?.open || document.hidden) return;
     started = true;
-    if (motion.matches) return;
+    prologue.classList.remove('prologue-leaving');
     stage = 'prologue'; prologue.hidden = false; main.inert = true;
+    window.scrollTo({top:0,behavior:'instant'});
     document.body.classList.add('welcome-playing','prologue-playing');
-    later(() => prologue.classList.add('prologue-leaving'),3300);
-    later(showScene,4200);
+    schedulePrologue();
+  }
+  function schedulePrologue() {
+    clearTimers();
+    later(() => prologue.classList.add('prologue-leaving'),5000);
+    later(showScene,6000);
   }
   document.getElementById('skip-welcome').addEventListener('click',() => {
     showScene(); main.focus({preventScroll:true});
   });
   language?.addEventListener('close', start);
-  motion.addEventListener('change', () => { if (motion.matches && stage !== 'idle' && stage !== 'finished') finish(); });
+  // The wish remains readable when motion is reduced or the tab was in back.
+  motion.addEventListener('change', () => { if (motion.matches && stage === 'scene') finish(); });
+  document.addEventListener('visibilitychange',() => {
+    if (stage === 'prologue') {
+      clearTimers(); prologue.classList.remove('prologue-leaving');
+      if (!document.hidden) schedulePrologue();
+    } else if (!document.hidden) start();
+  });
+  document.getElementById('replay-welcome')?.addEventListener('click',() => {
+    if (stage !== 'finished') return;
+    started = false; start();
+  });
   start();
 }
