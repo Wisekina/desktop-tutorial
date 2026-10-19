@@ -29,9 +29,7 @@ export function welcomeEntrance() {
   function start() {
     if (started || language?.open || document.hidden) return;
     started = true;
-    let understood = false;
-    try { understood = localStorage.getItem('neseli-guide-seen') === '1'; } catch {}
-    if (guide && !understood) showGuide(false);
+    if (guide) showGuide(false);
     else showWish();
   }
   function prepareOverlay() {
@@ -62,7 +60,6 @@ export function welcomeEntrance() {
   language?.addEventListener('close', start);
   document.getElementById('continue-guide')?.addEventListener('click',() => {
     if (stage !== 'guide') return;
-    try { localStorage.setItem('neseli-guide-seen','1'); } catch {}
     if (guideReturnsToMain) { finish(); main.focus({preventScroll:true}); }
     else showWish();
   });
